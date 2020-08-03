@@ -15,10 +15,12 @@ Supports:
 - Support for conditional and loop structures
 - Support for `tuple` type and handling sum types
 - Support for recurrence in functions
+
 (Moderate)
 - Support for `list` type
 - Memory Management
 - Support for `isinstance` and `type` functions
+
 (Far)
 - Support for variable length functions, `*args` and `**kwargs`
 - Support for higher order functions in python standard lib (map, reduce, filter)
