@@ -14,7 +14,7 @@ as
 def f(x):
     return x + 2
 
-then there is a inference:
+then there is an inference:
     f(Type of x): __add__(Type of x, int)
 
 If in global scope:
