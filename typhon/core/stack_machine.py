@@ -33,17 +33,17 @@ class FuncApply(Reduction):
 
     def reduce(self, impls):
         if self.args is None:
-            raise ValueError("No arguments to reduce")
+            raise ValueError("No arguments to reduce.")
         red = []
         for arg in self.args:
             if isinstance(arg, Reduction):
                 red.append(arg.reduce(impls))
             else:
-                raise TypeError("Non-reducible argument")
+                raise TypeError("Non-reducible argument.")
         interface = concepts.Interface(self.name, tuple(a[0] for a in red))
         self.impl = concepts.find_implementation(codegen.base_impls, interface)
         if self.impl is None:
-            raise TypeError("Interface %s is not implemented"
+            raise TypeError("Interface %s is not implemented."
                             % repr(interface))
         impls.add(self.impl)
         return (
@@ -85,8 +85,8 @@ class Variable(Reduction):
             self.py_type = base_types.PyFloat
         if self.py_type == type_assigned:
             return
-        raise ValueError("Multiple types for variable %s" % self.name,
-                         "This is not yet implemented.")
+        raise ValueError("Multiple types for variable %s." % self.name +
+                         " This is not yet implemented.")
 
 
 operator_names = {
@@ -224,7 +224,7 @@ class StackMachine:
         variables = self.variables
         stack = self.stack
         if instr.argval not in variables:
-            raise ValueError("Variable %s is used before initialization"
+            raise ValueError("Variable %s is used before initialization."
                              % instr.argval)
         stack.append(variables[instr.argval])
 
