@@ -6,14 +6,16 @@ Supports:
 - Function with no global side effects and no parameters and returns `0`
 - `int` and `float` type
 - Part of `str` type
+- `while` and `if` statements
 - Builtins: `input` and `print`
 - Python version: Tested on 3.5, should support anywhere from 3.2 to 3.7
-- No support on conditional and loop structures
 
 ## Roadmap
 (Near)
-- Support for conditional and loop structures
+- Support for `is`, `is not` and other conditionals
+- Support for unary operators
 - Support for `tuple` type and handling sum types
+- Support for `iter` type and `for` loops
 - Support for recurrence in functions
 
 (Moderate)
