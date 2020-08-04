@@ -23,8 +23,37 @@ def f2():
     print(s)
 
 
+def f3():
+    s = "hi"
+    print(s.startswith)
+    s.startswith("u")
+    if 'i' in s:
+        return
+
+
+def f4():
+    a = 0
+    lambda x: 5
+
+    def _f4_i():
+        return a
+    dis.show_code(_f4_i)
+    dis.dis(_f4_i)
+    return [x for x in range(10)]
+
+
+class ErrorFloat:
+
+    def __float__(self):
+        return "I'm not a float"
+
+
 if __name__ == "__main__":
     print("F1")
     dis.dis(f1)
     print("F2")
     dis.dis(f2)
+    print("F3")
+    dis.dis(f3)
+    print("F4")
+    dis.dis(f4)
