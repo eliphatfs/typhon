@@ -30,6 +30,20 @@ def h():
     return 0
 
 
+def i():
+    s = 3 > ~2
+    k = not s
+    if k:
+        print("Haha!")
+    else:
+        print("Wuwu.")
+    return 0
+
+
+def j():
+    return 2 @ 5
+
+
 if not os.path.exists("./temp"):
     os.mkdir("./temp")
 with open("temp/hello_world.c", "w") as fo:
@@ -38,3 +52,9 @@ with open("temp/a_plus_b_problem.c", "w") as fo:
     fo.write(typhon.generate_c(g))
 with open("temp/sum_1_to_1000000.c", "w") as fo:
     fo.write(typhon.generate_c(h))
+with open("temp/unary_condition.c", "w") as fo:
+    fo.write(typhon.generate_c(i))
+try:
+    fo.write(typhon.generate_c(j))
+except Exception as exc:
+    print("Transpilation fails with exception:", exc)

@@ -110,6 +110,12 @@ for op, name in operator_names.items():
     bin_opnames[opcode.opmap.get(op)] = name
     # TODO: Needs changing when mutable types come into consideration
     bin_opnames[opcode.opmap.get(op.replace("BINARY", "INPLACE"))] = name
+una_opnames = {
+    opcode.opmap.get("UNARY_POSITIVE"): "__pos__",
+    opcode.opmap.get("UNARY_NEGATIVE"): "__neg__",
+    opcode.opmap.get("UNARY_NOT"): "__not__",
+    opcode.opmap.get("UNARY_INVERT"): "__invert__",
+}
 
 
 names_comparator = {
@@ -180,6 +186,8 @@ class StackMachine:
         self.visitors = dict()
         for name, visitor in name_visitors.items():
             self.visitors[opcode.opmap.get(name)] = visitor
+        for op in una_opnames.keys():
+            self.visitors[op] = self.visit_unary_op
         for op in bin_opnames.keys():
             self.visitors[op] = self.visit_binary_op
         for op in stack_ops:
@@ -195,6 +203,10 @@ class StackMachine:
                   instr.opcode, "(%s)" % opcode.opname[instr.opcode])
         else:
             self.visitors[instr.opcode](instr)
+
+    def visit_unary_op(self, instr):
+        stack = self.stack
+        stack.append(FuncApply(una_opnames[instr.opcode], (stack.pop(),)))
 
     def visit_binary_op(self, instr):
         stack = self.stack
@@ -295,8 +307,7 @@ class CodeGenerator(StackMachine):
         super().feed(instr)
 
     def visit_unconditional_jump(self, instr):
-        applica = unconditional_jump_ops[instr.opcode]
-        self.body.append("goto BC_%d" % applica(instr.offset, instr.argval))
+        self.body.append("goto BC_%d" % instr.argval)
 
     def visit_conditional_jump(self, instr):
         applica = conditional_jump_ops[instr.opcode]

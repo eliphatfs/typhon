@@ -60,7 +60,6 @@ for name, op in bin_ops.items():
             impl("__truediv__", (fir, sec), PyFloat,
                  ("x", "y"), "return (double)x / (double)y;")
 
-
 for fir in (PyInt, PyFloat):
     for sec in (PyInt, PyFloat):
         if fir == PyInt and sec == PyInt:
@@ -71,6 +70,18 @@ for fir in (PyInt, PyFloat):
              ("x", "y"), "return (x - fmod(x, y)) / y;", "math.h")
         impl("pow", (fir, sec), PyFloat,
              ("x", "y"), "return pow(x, y);", "math.h")
+
+unary_ops = {
+    "__neg__": "-",
+    "__pos__": "+",
+    "abs": "abs"
+}
+for t in (PyInt, PyFloat):
+    for name, op in unary_ops.items():
+        impl(name, (t,), t, ("x",), 'return %s(x);' % op, 'math.h')
+impl('__invert__', (PyInt,), PyInt, ("x",), 'return ~x;')
+impl('__not__', (PyInt,), PyInt, ("x",), 'return !x;')
+
 impl("print", (PyInt,), PyNone, ("x",), 'printf("%lld\\n", x);', "stdio.h")
 impl("print", (PyFloat,), PyNone, ("x",), 'printf("%lf\\n", x);', "stdio.h")
 impl("int", (PyStr,), PyInt, ("x",), """

@@ -13,7 +13,6 @@ Supports:
 ## Roadmap
 (Near)
 - Support for `is`, `is not` and other conditionals
-- Support for unary operators
 - Support for `tuple` type and handling sum types
 - Support for `iter` type and `for` loops
 - Support for recurrence in functions
