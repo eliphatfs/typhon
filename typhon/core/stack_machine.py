@@ -132,6 +132,35 @@ conditional_jump_ops = {
     opcode.opmap.get("POP_JUMP_IF_FALSE"): (lambda x: "!(%s)" % x)
 }
 
+stack_ops = set(map(opcode.opmap.get, [
+    "NOP",
+    "ROT_TWO",
+    "ROT_THREE",
+    "DUP_TOP",
+    "DUP_TOP_TWO"
+]))
+
+
+def handle_stack_op(op, stack):
+    if op == opcode.opmap.get("NOP"):
+        return
+    elif op == opcode.opmap.get("ROT_TWO"):
+        tmp = stack[-1]
+        stack[-1] = stack[-2]
+        stack[-2] = tmp
+    elif op == opcode.opmap.get("ROT_THREE"):
+        tmp = stack[-1]
+        stack[-1] = stack[-2]
+        stack[-2] = stack[-3]
+        stack[-3] = tmp
+    elif op == opcode.opmap.get("DUP_TOP"):
+        stack.append(stack[-1])
+    elif op == opcode.opmap.get("DUP_TOP_TWO"):
+        stack.append(stack[-2])
+        stack.append(stack[-2])
+    else:
+        raise ValueError("Instruction %d is not an stack operation." % op)
+
 
 def translate(bc_obj):
     stack = list()
@@ -148,6 +177,8 @@ def translate(bc_obj):
             tos = stack.pop()
             tos1 = stack.pop()
             stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
+        elif instr.opcode in stack_ops:
+            handle_stack_op(instr.opcode, stack)
         elif instr.opcode == opcode.opmap["COMPARE_OP"]:
             if instr.argval not in comparator_names:
                 raise ValueError("Comparator %s is not yet supported."
@@ -202,6 +233,8 @@ def translate(bc_obj):
             tos = stack.pop()
             tos1 = stack.pop()
             stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
+        elif instr.opcode in stack_ops:
+            handle_stack_op(instr.opcode, stack)
         elif instr.opcode == opcode.opmap["COMPARE_OP"]:
             tos = stack.pop()
             tos1 = stack.pop()
