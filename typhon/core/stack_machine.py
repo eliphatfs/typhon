@@ -7,7 +7,6 @@ Simulates the python stack machine.
 """
 import opcode
 import collections
-import builtins
 from .type_system import concepts
 from .type_system import base_types
 from . import codegen
@@ -90,9 +89,33 @@ class Variable(Reduction):
                          "This is not yet implemented.")
 
 
+operator_names = {
+    "BINARY_ADD": "__add__",
+    "BINARY_POWER": "pow",
+    "BINARY_MULTIPLY": "__mul__",
+    "BINARY_SUBTRACT": "__sub__",
+    "BINARY_FLOOR_DIVIDE": "__floordiv__",
+    "BINARY_TRUE_DIVIDE": "__truediv__",
+    "BINARY_MATRIX_MULTIPLY": "__matmul__",
+    "BINARY_MODULO": "__mod__",
+
+    "BINARY_LSHIFT": "__lshift__",
+    "BINARY_RSHIFT": "__rshift__",
+    "BINARY_XOR": "__xor__",
+    "BINARY_AND": "__and__",
+    "BINARY_OR": "__or__",
+}
+opcode_opname = dict()
+for op, name in operator_names.items():
+    opcode_opname[opcode.opmap.get(op)] = name
+    # TODO: Needs changing when mutable types come into consideration
+    opcode_opname[opcode.opmap.get(op.replace("BINARY", "INPLACE"))] = name
+
+
 def translate(bc_obj):
     stack = list()
     glo = globals()
+    import builtins
     for name in dir(builtins):
         glo[name] = getattr(builtins, name)
     variables = dict()
@@ -100,10 +123,10 @@ def translate(bc_obj):
     # Two step
     # Step 1: Infer variable types
     for instr in bc_obj:
-        if instr.opcode == opcode.opmap["BINARY_ADD"]:
+        if instr.opcode in opcode_opname:
             tos = stack.pop()
             tos1 = stack.pop()
-            stack.append(FuncApply("__add__", (tos1, tos)))
+            stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
         if instr.opcode == opcode.opmap["LOAD_FAST"]:
             if instr.argval not in variables:
                 raise ValueError("Variable %s is used before initialization"
@@ -135,10 +158,10 @@ def translate(bc_obj):
     body = list()
     # Step 2: Generate body code
     for instr in bc_obj:
-        if instr.opcode == opcode.opmap["BINARY_ADD"]:
+        if instr.opcode in opcode_opname:
             tos = stack.pop()
             tos1 = stack.pop()
-            stack.append(FuncApply("__add__", (tos1, tos)))
+            stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
         if instr.opcode == opcode.opmap["LOAD_FAST"]:
             stack.append(variables[instr.argval])
         if instr.opcode == opcode.opmap["STORE_FAST"]:
