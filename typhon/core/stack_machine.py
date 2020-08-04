@@ -105,11 +105,11 @@ operator_names = {
     "BINARY_AND": "__and__",
     "BINARY_OR": "__or__",
 }
-opcode_opname = dict()
+bin_opnames = dict()
 for op, name in operator_names.items():
-    opcode_opname[opcode.opmap.get(op)] = name
+    bin_opnames[opcode.opmap.get(op)] = name
     # TODO: Needs changing when mutable types come into consideration
-    opcode_opname[opcode.opmap.get(op.replace("BINARY", "INPLACE"))] = name
+    bin_opnames[opcode.opmap.get(op.replace("BINARY", "INPLACE"))] = name
 
 
 names_comparator = {
@@ -162,105 +162,171 @@ def handle_stack_op(op, stack):
         raise ValueError("Instruction %d is not an stack operation." % op)
 
 
-def translate(bc_obj):
-    stack = list()
-    glo = globals()
-    import builtins
-    for name in dir(builtins):
-        glo[name] = getattr(builtins, name)
-    variables = dict()
-    impls = set()
-    # Two step
-    # Step 1: Infer variable types
-    for instr in bc_obj:
-        if instr.opcode in opcode_opname:
-            tos = stack.pop()
-            tos1 = stack.pop()
-            stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
-        elif instr.opcode in stack_ops:
-            handle_stack_op(instr.opcode, stack)
-        elif instr.opcode == opcode.opmap["COMPARE_OP"]:
-            if instr.argval not in comparator_names:
-                raise ValueError("Comparator %s is not yet supported."
-                                 % instr.argval)
-            tos = stack.pop()
-            tos1 = stack.pop()
-            compname = comparator_names[instr.argval]
-            stack.append(FuncApply(compname, (tos1, tos)))
-        elif instr.opcode in unconditional_jump_ops:
-            pass
-        elif instr.opcode in conditional_jump_ops:
-            if stack.pop().reduce(impls)[0] != base_types.PyInt:
-                raise TypeError("Jump condition is not integral." +
-                                " __bool__ is not yet supported.")
-        elif instr.opcode == opcode.opmap["LOAD_FAST"]:
-            if instr.argval not in variables:
-                raise ValueError("Variable %s is used before initialization"
-                                 % instr.argval)
-            stack.append(variables[instr.argval])
-        elif instr.opcode == opcode.opmap["STORE_FAST"]:
-            v = variables.get(instr.argval, Variable(instr.argval))
-            v.union(stack.pop().reduce(impls)[0])
-            variables[instr.argval] = v
-        elif instr.opcode == opcode.opmap["LOAD_GLOBAL"]:
-            obj = glo[instr.argval]
-            if callable(obj):
-                stack.append(FuncApply(instr.argval))
-            else:
-                raise ValueError("Globals other than print and input" +
-                                 "is not yet supported.")
-        elif instr.opcode == opcode.opmap["LOAD_CONST"]:
-            stack.append(Constant(instr.argval))
-        elif instr.opcode == opcode.opmap["POP_TOP"]:
-            stack.pop()
-        elif instr.opcode == opcode.opmap["CALL_FUNCTION"]:
-            arg = [stack.pop() for _ in range(instr.argval)][::-1]
-            if not isinstance(stack[-1], FuncApply):
-                raise TypeError(repr(stack[-1]) + " is not callable.")
-            stack[-1].args = tuple(arg)
-        elif instr.opcode == opcode.opmap["RETURN_VALUE"]:
-            stack.pop()
-        else:
+class StackMachine:
+
+    def __init__(self):
+        self.stack = list()
+        self.variables = dict()
+        name_visitors = {
+            "COMPARE_OP": self.visit_comparator_op,
+            "LOAD_FAST": self.visit_load_fast,
+            "STORE_FAST": self.visit_store_fast,
+            "LOAD_GLOBAL": self.visit_load_global,
+            "LOAD_CONST": self.visit_load_const,
+            "POP_TOP": self.visit_pop_top,
+            "CALL_FUNCTION": self.visit_call_function,
+            "RETURN_VALUE": self.visit_return
+        }
+        self.visitors = dict()
+        for name, visitor in name_visitors.items():
+            self.visitors[opcode.opmap.get(name)] = visitor
+        for op in bin_opnames.keys():
+            self.visitors[op] = self.visit_binary_op
+        for op in stack_ops:
+            self.visitors[op] = self.visit_stack_op
+        for op in unconditional_jump_ops.keys():
+            self.visitors[op] = self.visit_unconditional_jump
+        for op in conditional_jump_ops.keys():
+            self.visitors[op] = self.visit_conditional_jump
+
+    def feed(self, instr):
+        if instr.opcode not in self.visitors:
             print("Warning: Unsupported instruction",
                   instr.opcode, "(%s)" % opcode.opname[instr.opcode])
-    assert len(stack) == 0, "Side effects to stack."
-    body = list()
+        else:
+            self.visitors[instr.opcode](instr)
+
+    def visit_binary_op(self, instr):
+        stack = self.stack
+        tos = stack.pop()
+        tos1 = stack.pop()
+        stack.append(FuncApply(bin_opnames[instr.opcode], (tos1, tos)))
+
+    def visit_stack_op(self, instr):
+        handle_stack_op(instr.opcode, self.stack)
+
+    def visit_comparator_op(self, instr):
+        if instr.argval not in comparator_names:
+            raise ValueError("'%s' is not yet supported." % instr.argval)
+        stack = self.stack
+        tos = stack.pop()
+        tos1 = stack.pop()
+        compname = comparator_names[instr.argval]
+        stack.append(FuncApply(compname, (tos1, tos)))
+
+    def visit_unconditional_jump(self, instr):
+        return
+
+    def visit_conditional_jump(self, instr):
+        self.stack.pop()
+
+    def visit_load_fast(self, instr):
+        variables = self.variables
+        stack = self.stack
+        if instr.argval not in variables:
+            raise ValueError("Variable %s is used before initialization"
+                             % instr.argval)
+        stack.append(variables[instr.argval])
+
+    def visit_store_fast(self, instr):
+        v = self.variables.get(instr.argval, Variable(instr.argval))
+        self.stack.pop()
+        self.variables[instr.argval] = v
+
+    def visit_load_global(self, instr):
+        import builtins
+        obj = getattr(builtins, instr.argval)
+        if callable(obj):
+            self.stack.append(FuncApply(instr.argval))
+        else:
+            raise ValueError("Globals other than builtin functions" +
+                             "are not yet supported.")
+
+    def visit_load_const(self, instr):
+        self.stack.append(Constant(instr.argval))
+
+    def visit_pop_top(self, instr):
+        self.stack.pop()
+
+    def visit_call_function(self, instr):
+        arg = [self.stack.pop() for _ in range(instr.argval)][::-1]
+        self.stack[-1].args = tuple(arg)
+
+    def visit_return(self, instr):
+        self.stack.pop()
+
+
+class Analyzer(StackMachine):
+
+    def visit_conditional_jump(self, instr):
+        if self.stack.pop().reduce(set())[0] != base_types.PyInt:
+            raise TypeError("Jump condition is not integral." +
+                            " __bool__ is not yet supported.")
+
+    def visit_store_fast(self, instr):
+        v = self.variables.get(instr.argval, Variable(instr.argval))
+        v.union(self.stack.pop().reduce(set())[0])
+        self.variables[instr.argval] = v
+
+    def visit_call_function(self, instr):
+        arg = [self.stack.pop() for _ in range(instr.argval)][::-1]
+        if not isinstance(self.stack[-1], FuncApply):
+            raise TypeError(repr(self.stack[-1]) + " is not callable.")
+        self.stack[-1].args = tuple(arg)
+
+    def visit_pop_top(self, instr):
+        self.stack.pop().reduce(set())
+
+    def visit_return(self, instr):
+        self.stack.pop().reduce(set())
+
+
+class CodeGenerator(StackMachine):
+
+    def __init__(self, variables):
+        super().__init__()
+        self.impls = set()
+        self.body = list()
+        self.variables = variables
+
+    def feed(self, instr):
+        if instr.is_jump_target:
+            self.body.append("BC_%d:" % instr.offset)
+        super().feed(instr)
+
+    def visit_unconditional_jump(self, instr):
+        applica = unconditional_jump_ops[instr.opcode]
+        self.body.append("goto BC_%d" % applica(instr.offset, instr.argval))
+
+    def visit_conditional_jump(self, instr):
+        applica = conditional_jump_ops[instr.opcode]
+        cond = applica(self.stack.pop().reduce(self.impls)[-1])
+        self.body.append("if (%s) goto BC_%d" % (cond, instr.argval))
+
+    def visit_pop_top(self, instr):
+        self.body.append(self.stack.pop().reduce(self.impls)[-1])
+
+    def visit_store_fast(self, instr):
+        func = self.stack.pop()
+        self.body.append(instr.argval + " = " + func.reduce(self.impls)[-1])
+
+    def visit_return(self, instr):
+        self.body.append("return " + self.stack.pop().reduce(self.impls)[-1])
+
+
+def translate(bc_obj):
+    # Two step
+    # Step 1: Infer variable types
+    analyzer = Analyzer()
+    for instr in bc_obj:
+        analyzer.feed(instr)
+    assert len(analyzer.stack) == 0, "Side effects to stack."
+    generator = CodeGenerator(analyzer.variables)
     # Step 2: Generate body code
     for instr in bc_obj:
-        if instr.is_jump_target:
-            body.append("BC_%d:" % instr.offset)
-        if instr.opcode in opcode_opname:
-            tos = stack.pop()
-            tos1 = stack.pop()
-            stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
-        elif instr.opcode in stack_ops:
-            handle_stack_op(instr.opcode, stack)
-        elif instr.opcode == opcode.opmap["COMPARE_OP"]:
-            tos = stack.pop()
-            tos1 = stack.pop()
-            compname = comparator_names[instr.argval]
-            stack.append(FuncApply(compname, (tos1, tos)))
-        elif instr.opcode in unconditional_jump_ops:
-            applica = unconditional_jump_ops[instr.opcode]
-            body.append("goto BC_%d" % applica(instr.offset, instr.argval))
-        elif instr.opcode in conditional_jump_ops:
-            applica = conditional_jump_ops[instr.opcode]
-            cond = applica(stack.pop().reduce(impls)[-1])
-            body.append("if (%s) goto BC_%d" % (cond, instr.argval))
-        elif instr.opcode == opcode.opmap["LOAD_FAST"]:
-            stack.append(variables[instr.argval])
-        elif instr.opcode == opcode.opmap["STORE_FAST"]:
-            func = stack.pop()
-            body.append(instr.argval + " = " + func.reduce(impls)[-1])
-        elif instr.opcode == opcode.opmap["LOAD_GLOBAL"]:
-            stack.append(FuncApply(instr.argval))
-        elif instr.opcode == opcode.opmap["LOAD_CONST"]:
-            stack.append(Constant(instr.argval))
-        elif instr.opcode == opcode.opmap["POP_TOP"]:
-            body.append(stack.pop().reduce(impls)[-1])
-        elif instr.opcode == opcode.opmap["CALL_FUNCTION"]:
-            arg = [stack.pop() for _ in range(instr.argval)][::-1]
-            stack[-1].args = tuple(arg)
-        elif instr.opcode == opcode.opmap["RETURN_VALUE"]:
-            body.append("return " + stack.pop().reduce(impls)[-1])
-    return TranslationResult(body, impls, variables)
+        generator.feed(instr)
+    return TranslationResult(
+        generator.body,
+        generator.impls,
+        generator.variables
+    )
