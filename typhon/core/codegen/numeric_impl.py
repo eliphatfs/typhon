@@ -18,19 +18,27 @@ def merge_numeric(t1, t2):
 bin_ops = {
     "__add__": "+",
     "__sub__": "-",
-    "__mul__": "*",
-
-    "__lt__": "<",
-    "__le__": "<=",
-    "__eq__": "==",
-    "__gt__": ">",
-    "__ge__": ">=",
+    "__mul__": "*"
 }
 
 for name, op in bin_ops.items():
     for fir in (PyInt, PyFloat):
         for sec in (PyInt, PyFloat):
             impl(name, (fir, sec), merge_numeric(fir, sec),
+                 ("x", "y"), "return x {op} y;".format(op=op))
+
+compare_ops = {
+    "__lt__": "<",
+    "__le__": "<=",
+    "__eq__": "==",
+    "__gt__": ">",
+    "__ge__": ">=",
+    "__ne__": "!="
+}
+for name, op in compare_ops.items():
+    for fir in (PyInt, PyFloat):
+        for sec in (PyInt, PyFloat):
+            impl(name, (fir, sec), PyInt,
                  ("x", "y"), "return x {op} y;".format(op=op))
 
 int_bin_ops = {
