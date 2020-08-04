@@ -112,6 +112,27 @@ for op, name in operator_names.items():
     opcode_opname[opcode.opmap.get(op.replace("BINARY", "INPLACE"))] = name
 
 
+names_comparator = {
+    "__lt__": "<",
+    "__le__": "<=",
+    "__eq__": "==",
+    "__gt__": ">",
+    "__ge__": ">=",
+    "__ne__": "!=",
+}
+comparator_names = {v: k for k, v in names_comparator.items()}
+
+
+unconditional_jump_ops = {
+    opcode.opmap.get("JUMP_FORWARD"): (lambda x, arg: x + arg),
+    opcode.opmap.get("JUMP_ABSOLUTE"): (lambda x, arg: arg)
+}
+conditional_jump_ops = {
+    opcode.opmap.get("POP_JUMP_IF_TRUE"): (lambda x: x),
+    opcode.opmap.get("POP_JUMP_IF_FALSE"): (lambda x: "!(%s)" % x)
+}
+
+
 def translate(bc_obj):
     stack = list()
     glo = globals()
@@ -127,55 +148,86 @@ def translate(bc_obj):
             tos = stack.pop()
             tos1 = stack.pop()
             stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
-        if instr.opcode == opcode.opmap["LOAD_FAST"]:
+        elif instr.opcode == opcode.opmap["COMPARE_OP"]:
+            if instr.argval not in comparator_names:
+                raise ValueError("Comparator %s is not yet supported."
+                                 % instr.argval)
+            tos = stack.pop()
+            tos1 = stack.pop()
+            compname = comparator_names[instr.argval]
+            stack.append(FuncApply(compname, (tos1, tos)))
+        elif instr.opcode in unconditional_jump_ops:
+            pass
+        elif instr.opcode in conditional_jump_ops:
+            if stack.pop().reduce(impls)[0] != base_types.PyInt:
+                raise TypeError("Jump condition is not integral." +
+                                " __bool__ is not yet supported.")
+        elif instr.opcode == opcode.opmap["LOAD_FAST"]:
             if instr.argval not in variables:
                 raise ValueError("Variable %s is used before initialization"
                                  % instr.argval)
             stack.append(variables[instr.argval])
-        if instr.opcode == opcode.opmap["STORE_FAST"]:
+        elif instr.opcode == opcode.opmap["STORE_FAST"]:
             v = variables.get(instr.argval, Variable(instr.argval))
             v.union(stack.pop().reduce(impls)[0])
             variables[instr.argval] = v
-        if instr.opcode == opcode.opmap["LOAD_GLOBAL"]:
+        elif instr.opcode == opcode.opmap["LOAD_GLOBAL"]:
             obj = glo[instr.argval]
             if callable(obj):
                 stack.append(FuncApply(instr.argval))
             else:
                 raise ValueError("Globals other than print and input" +
                                  "is not yet supported.")
-        if instr.opcode == opcode.opmap["LOAD_CONST"]:
+        elif instr.opcode == opcode.opmap["LOAD_CONST"]:
             stack.append(Constant(instr.argval))
-        if instr.opcode == opcode.opmap["POP_TOP"]:
+        elif instr.opcode == opcode.opmap["POP_TOP"]:
             stack.pop()
-        if instr.opcode == opcode.opmap["CALL_FUNCTION"]:
+        elif instr.opcode == opcode.opmap["CALL_FUNCTION"]:
             arg = [stack.pop() for _ in range(instr.argval)][::-1]
             if not isinstance(stack[-1], FuncApply):
                 raise TypeError(repr(stack[-1]) + " is not callable.")
             stack[-1].args = tuple(arg)
-        if instr.opcode == opcode.opmap["RETURN_VALUE"]:
+        elif instr.opcode == opcode.opmap["RETURN_VALUE"]:
             stack.pop()
+        else:
+            print("Warning: Unsupported instruction",
+                  instr.opcode, "(%s)" % opcode.opname[instr.opcode])
     assert len(stack) == 0, "Side effects to stack."
     body = list()
     # Step 2: Generate body code
     for instr in bc_obj:
+        if instr.is_jump_target:
+            body.append("BC_%d:" % instr.offset)
         if instr.opcode in opcode_opname:
             tos = stack.pop()
             tos1 = stack.pop()
             stack.append(FuncApply(opcode_opname[instr.opcode], (tos1, tos)))
-        if instr.opcode == opcode.opmap["LOAD_FAST"]:
+        elif instr.opcode == opcode.opmap["COMPARE_OP"]:
+            tos = stack.pop()
+            tos1 = stack.pop()
+            compname = comparator_names[instr.argval]
+            stack.append(FuncApply(compname, (tos1, tos)))
+        elif instr.opcode in unconditional_jump_ops:
+            applica = unconditional_jump_ops[instr.opcode]
+            body.append("goto BC_%d" % applica(instr.offset, instr.argval))
+        elif instr.opcode in conditional_jump_ops:
+            applica = conditional_jump_ops[instr.opcode]
+            cond = applica(stack.pop().reduce(impls)[-1])
+            body.append("if (%s) goto BC_%d" % (cond, instr.argval))
+        elif instr.opcode == opcode.opmap["LOAD_FAST"]:
             stack.append(variables[instr.argval])
-        if instr.opcode == opcode.opmap["STORE_FAST"]:
+        elif instr.opcode == opcode.opmap["STORE_FAST"]:
             func = stack.pop()
             body.append(instr.argval + " = " + func.reduce(impls)[-1])
-        if instr.opcode == opcode.opmap["LOAD_GLOBAL"]:
+        elif instr.opcode == opcode.opmap["LOAD_GLOBAL"]:
             stack.append(FuncApply(instr.argval))
-        if instr.opcode == opcode.opmap["LOAD_CONST"]:
+        elif instr.opcode == opcode.opmap["LOAD_CONST"]:
             stack.append(Constant(instr.argval))
-        if instr.opcode == opcode.opmap["POP_TOP"]:
+        elif instr.opcode == opcode.opmap["POP_TOP"]:
             body.append(stack.pop().reduce(impls)[-1])
-        if instr.opcode == opcode.opmap["CALL_FUNCTION"]:
+        elif instr.opcode == opcode.opmap["CALL_FUNCTION"]:
             arg = [stack.pop() for _ in range(instr.argval)][::-1]
             stack[-1].args = tuple(arg)
-        if instr.opcode == opcode.opmap["RETURN_VALUE"]:
+        elif instr.opcode == opcode.opmap["RETURN_VALUE"]:
             body.append("return " + stack.pop().reduce(impls)[-1])
     return TranslationResult(body, impls, variables)

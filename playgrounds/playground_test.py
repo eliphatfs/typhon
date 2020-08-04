@@ -27,7 +27,7 @@ def f3():
     s = "hi"
     print(s.startswith)
     s.startswith("u")
-    if 'i' in s:
+    if 'i' in s or s is not None:
         return
 
 
@@ -40,6 +40,12 @@ def f4():
     dis.show_code(_f4_i)
     dis.dis(_f4_i)
     return [x for x in range(10)]
+
+
+def f5():
+    a = 0
+    while a < 10:
+        a += 1
 
 
 class ErrorFloat:
@@ -57,3 +63,5 @@ if __name__ == "__main__":
     dis.dis(f3)
     print("F4")
     dis.dis(f4)
+    print("F5")
+    dis.dis(f5)
