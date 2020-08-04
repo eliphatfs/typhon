@@ -89,6 +89,16 @@ class Variable(Reduction):
                          " This is not yet implemented.")
 
 
+class TempVar(Reduction):
+
+    def __init__(self, py_type, name):
+        self.py_type = py_type
+        self.name = name
+
+    def reduce(self, impls):
+        return self.py_type, self.name
+
+
 operator_names = {
     "BINARY_ADD": "__add__",
     "BINARY_POWER": "pow",
@@ -300,11 +310,30 @@ class CodeGenerator(StackMachine):
         self.impls = set()
         self.body = list()
         self.variables = variables
+        self.stack_var_id = 0
+
+    def allocate_stack_var(self):
+        self.stack_var_id += 1
+        return "__stack_" + str(self.stack_var_id)
 
     def feed(self, instr):
         if instr.is_jump_target:
             self.body.append("BC_%d:" % instr.offset)
         super().feed(instr)
+
+    def replace_top_with_temp_variable(self):
+        t, expr = self.stack[-1].reduce(self.impls)
+        tv = TempVar(t, self.allocate_stack_var())
+        self.body.append(t.c_name + " " + tv.name + " = " + expr)
+        self.stack[-1] = tv
+
+    def visit_unary_op(self, instr):
+        super().visit_unary_op(instr)
+        self.replace_top_with_temp_variable()
+
+    def visit_binary_op(self, instr):
+        super().visit_binary_op(instr)
+        self.replace_top_with_temp_variable()
 
     def visit_unconditional_jump(self, instr):
         self.body.append("goto BC_%d" % instr.argval)
@@ -314,12 +343,13 @@ class CodeGenerator(StackMachine):
         cond = applica(self.stack.pop().reduce(self.impls)[-1])
         self.body.append("if (%s) goto BC_%d" % (cond, instr.argval))
 
-    def visit_pop_top(self, instr):
-        self.body.append(self.stack.pop().reduce(self.impls)[-1])
-
     def visit_store_fast(self, instr):
         func = self.stack.pop()
         self.body.append(instr.argval + " = " + func.reduce(self.impls)[-1])
+
+    def visit_call_function(self, instr):
+        super().visit_call_function(instr)
+        self.replace_top_with_temp_variable()
 
     def visit_return(self, instr):
         self.body.append("return " + self.stack.pop().reduce(self.impls)[-1])
