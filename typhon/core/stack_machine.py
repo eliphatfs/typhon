@@ -125,6 +125,7 @@ una_opnames = {
     opcode.opmap.get("UNARY_NEGATIVE"): "__neg__",
     opcode.opmap.get("UNARY_NOT"): "__not__",
     opcode.opmap.get("UNARY_INVERT"): "__invert__",
+    opcode.opmap.get("GET_ITER"): "iter",
 }
 
 
@@ -191,7 +192,8 @@ class StackMachine:
             "LOAD_CONST": self.visit_load_const,
             "POP_TOP": self.visit_pop_top,
             "CALL_FUNCTION": self.visit_call_function,
-            "RETURN_VALUE": self.visit_return
+            "RETURN_VALUE": self.visit_return,
+            "FOR_ITER": self.visit_for
         }
         self.visitors = dict()
         for name, visitor in name_visitors.items():
@@ -213,6 +215,11 @@ class StackMachine:
                   instr.opcode, "(%s)" % opcode.opname[instr.opcode])
         else:
             self.visitors[instr.opcode](instr)
+
+    def visit_for(self, instr):
+        # This is not what python does.
+        # Modified for a stack balance check.
+        self.stack.append(FuncApply("_typhon_iter_step", (self.stack.pop(),)))
 
     def visit_unary_op(self, instr):
         stack = self.stack
@@ -326,6 +333,15 @@ class CodeGenerator(StackMachine):
         tv = TempVar(t, self.allocate_stack_var())
         self.body.append(t.c_name + " " + tv.name + " = " + expr)
         self.stack[-1] = tv
+
+    def visit_for(self, instr):
+        it = self.stack.pop()
+        self.stack.append(FuncApply("_typhon_iter_step", (it,)))
+        t, expr = FuncApply("_typhon_iter_is_over", (it,)).reduce(self.impls)
+        if t != base_types.PyInt:
+            raise TypeError("Iteration end condition should be boolean type.")
+        self.body.append("if (%s) goto BC_%d;" % (expr, instr.argval))
+        self.replace_top_with_temp_variable()
 
     def visit_unary_op(self, instr):
         super().visit_unary_op(instr)

@@ -48,6 +48,10 @@ def f5():
         a += 1
 
 
+def f6():
+    return range(10)[1:7:3]
+
+
 class ErrorFloat:
 
     def __float__(self):
@@ -55,13 +59,5 @@ class ErrorFloat:
 
 
 if __name__ == "__main__":
-    print("F1")
-    dis.dis(f1)
-    print("F2")
+    dis.show_code(f2)
     dis.dis(f2)
-    print("F3")
-    dis.dis(f3)
-    print("F4")
-    dis.dis(f4)
-    print("F5")
-    dis.dis(f5)

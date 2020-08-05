@@ -44,6 +44,16 @@ def j():
     return 2 @ 5
 
 
+def k():
+    for i in range(100, 1000):
+        first = i // 100
+        second = (i % 100) // 10
+        third = i % 10
+        if i == first ** 3 + second ** 3 + third ** 3:
+            print(i)
+    return 0
+
+
 if not os.path.exists("./temp"):
     os.mkdir("./temp")
 with open("temp/hello_world.c", "w") as fo:
@@ -58,3 +68,5 @@ try:
     fo.write(typhon.generate_c(j))
 except Exception as exc:
     print("Transpilation fails with exception:", exc)
+with open("temp/water_flower_number.c", "w") as fo:
+    fo.write(typhon.generate_c(k))
