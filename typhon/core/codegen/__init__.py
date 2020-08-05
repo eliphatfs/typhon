@@ -18,7 +18,7 @@ def impl(name, types, result_type, varnames, code, inc=None, inl=True):
     ))
 
 
-from . import numeric_impl, string_impl
+from . import numeric_impl, string_impl, range_impl
 
 
 gen_format = """
