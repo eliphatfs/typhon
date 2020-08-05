@@ -1,5 +1,7 @@
 # Typhon
 Static Type Inference for Python.
+The goal is to infer types without explicit notations as much as possible.
+As a by-product, a traspiler targetting C is also included.
 
 ## Status: Preliminary
 Supports:
