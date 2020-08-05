@@ -18,6 +18,10 @@ def f2():
         s += i
         if i == 8:
             break
+        else:
+            s += i
+            continue
+        s += i
     else:
         s = 10
     print(s)

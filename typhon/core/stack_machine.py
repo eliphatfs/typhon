@@ -17,6 +17,11 @@ TranslationResult = collections.namedtuple(
     ["body", "impls", "variables"]
 )
 
+StaticBlock = collections.namedtuple(
+    "StaticBlock",
+    ["opcode", "end"]
+)
+
 
 class Reduction:
 
@@ -142,7 +147,8 @@ comparator_names = {v: k for k, v in names_comparator.items()}
 
 unconditional_jump_ops = {
     opcode.opmap.get("JUMP_FORWARD"): (lambda x, arg: x + arg),
-    opcode.opmap.get("JUMP_ABSOLUTE"): (lambda x, arg: arg)
+    opcode.opmap.get("JUMP_ABSOLUTE"): (lambda x, arg: arg),
+    opcode.opmap.get("CONTINUE_LOOP"): (lambda x, arg: arg),
 }
 conditional_jump_ops = {
     opcode.opmap.get("POP_JUMP_IF_TRUE"): (lambda x: x),
@@ -183,6 +189,7 @@ class StackMachine:
 
     def __init__(self):
         self.stack = list()
+        self.blocks = list()
         self.variables = dict()
         name_visitors = {
             "COMPARE_OP": self.visit_comparator_op,
@@ -193,7 +200,10 @@ class StackMachine:
             "POP_TOP": self.visit_pop_top,
             "CALL_FUNCTION": self.visit_call_function,
             "RETURN_VALUE": self.visit_return,
-            "FOR_ITER": self.visit_for
+            "FOR_ITER": self.visit_for,
+            "BREAK_LOOP": self.visit_break_loop,
+            "SETUP_LOOP": self.visit_setup_block,
+            "POP_BLOCK": self.visit_pop_block,
         }
         self.visitors = dict()
         for name, visitor in name_visitors.items():
@@ -220,6 +230,15 @@ class StackMachine:
         # This is not what python does.
         # Modified for a stack balance check.
         self.stack.append(FuncApply("_typhon_iter_step", (self.stack.pop(),)))
+
+    def visit_setup_block(self, instr):
+        self.blocks.append(StaticBlock(instr.opcode, instr.argval))
+
+    def visit_pop_block(self, instr):
+        self.blocks.pop()
+
+    def visit_break_loop(self, instr):
+        assert self.blocks[-1].opcode == opcode.opmap.get("SETUP_LOOP")
 
     def visit_unary_op(self, instr):
         stack = self.stack
@@ -351,6 +370,10 @@ class CodeGenerator(StackMachine):
         super().visit_binary_op(instr)
         self.replace_top_with_temp_variable()
 
+    def visit_break_loop(self, instr):
+        super().visit_break_loop(instr)
+        self.body.append("goto BC_%d" % self.blocks[-1].end)
+
     def visit_unconditional_jump(self, instr):
         self.body.append("goto BC_%d" % instr.argval)
 
@@ -378,6 +401,7 @@ def translate(bc_obj):
     for instr in bc_obj:
         analyzer.feed(instr)
     assert len(analyzer.stack) == 0, "Side effects to stack."
+    assert len(analyzer.blocks) == 0, "Side effects to static blocks."
     generator = CodeGenerator(analyzer.variables)
     # Step 2: Generate body code
     for instr in bc_obj:
