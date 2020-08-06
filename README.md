@@ -5,7 +5,9 @@ As a by-product, a traspiler targetting C is also included.
 
 ## Status: Preliminary
 Supports:
-- Function with no global side effects and no parameters and returns `0`
+- Function with no global side effects (`main` function should have no arguments and return `0`)
+- Automatic resolving of dependent functions
+- Basic recurrence in functions (Recurrence of two and more functions are prohibited because of the dependency resolving algorithm. Return type inferrence is still quite weak and inaccurate under recurrence)
 - `int` and `float` type
 - Part of `str` type
 - `while`, `if` and `for` statements
@@ -16,12 +18,12 @@ Supports:
 (Near)
 - Support for `is`, `is not` and other conditionals
 - Support for `tuple` type and handling sum types
-- Support for recurrence in functions
 
 (Moderate)
 - Support for `list` type
 - Memory Management
 - Support for `isinstance` and `type` functions
+- Exceptions
 
 (Far)
 - Support for variable length functions, `*args` and `**kwargs`
