@@ -5,7 +5,7 @@ Created on Thu Aug  6 13:12:53 2020
 @author: eliphat
 """
 from .. import concepts
-from ..type_system import base_types
+from ..type_system import base_types, inference
 from .. import codegen
 
 
@@ -36,9 +36,9 @@ class FuncApply(Reduction):
         if self.impl is None:
             raise TypeError("Interface %s is not implemented."
                             % repr(interface))
-        impls.add(self.impl)
+        impls.add((self.impl, interface))
         return (
-            self.impl.result_type,
+            self.impl.get_result_type(interface.types),
             (codegen.name_of(self.impl)
              + "(" + ', '.join(a[1] for a in red) + ")")
         )
@@ -69,15 +69,7 @@ class Variable(Reduction):
         return self.py_type, self.name
 
     def union(self, type_assigned):
-        if self.py_type is None:
-            self.py_type = type_assigned
-        typeset = set((self.py_type, type_assigned))
-        if typeset == {base_types.PyInt, base_types.PyFloat}:
-            self.py_type = base_types.PyFloat
-        if self.py_type == type_assigned:
-            return
-        raise ValueError("Multiple types for variable %s." % self.name +
-                         " This is not yet implemented.")
+        self.py_type = inference.type_merge(self.py_type, type_assigned)
 
 
 class TempVar(Reduction):

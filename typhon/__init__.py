@@ -12,16 +12,17 @@ def generate_c(func):
     bc = dis.Bytecode(func)
     result = core.stack_machine.translate(bc)
     includes = set()
-    for imp in result.impls:
-        includes.update(imp.include)
+    for imp, interface in result.impls:
+        if hasattr(imp, 'include'):
+            includes.update(imp.include)
     file_header = '\n'.join(map(lambda x: "#include <%s>" % x, includes))
     types = {var.py_type for var in result.variables.values()}
-    for imp in result.impls:
-        types.add(imp.result_type)
-        for t in imp.types:
+    for imp, interface in result.impls:
+        types.add(imp.get_result_type(interface.types))
+        for t in interface.types:
             types.add(t)
     type_header = "".join(map(lambda t: t.definition, types))
-    impl_header = "\n".join(map(lambda i: core.codegen.generate(i),
+    impl_header = "\n".join(map(lambda i: i[0].generate(i[1].types),
                                 result.impls))
     main_header = "int main() {\n    "
     main_variables = []

@@ -4,6 +4,8 @@ Created on Mon Aug  3 11:59:56 2020
 
 @author: eliphat
 """
+import dis
+import sys
 from collections import namedtuple, defaultdict
 from ..concepts import AbstractImplementation
 
@@ -58,7 +60,7 @@ class BootstrappingImplementation(Implementation, AbstractImplementation):
 
 
 def name_of(imp):
-    return imp.name + "_" + str(abs(hash(imp)))
+    return imp.get_name() + "_" + str(abs(hash(imp)))
 
 
 def impl(name, types, result_type, varnames, code, inc=None, inl=True):
@@ -71,11 +73,22 @@ def impl(name, types, result_type, varnames, code, inc=None, inl=True):
     ))
 
 
-from . import numeric_impl, string_impl, range_impl
+from . import numeric_impl, string_impl, range_impl, python_impl
 
 
 def find_implementation(interface):
     for imp in base_impls[interface.name]:
         if imp.implements(interface):
             return imp
+    scope = sys.modules["__main__"]
+    if hasattr(scope, interface.name):
+        target = getattr(scope, interface.name)
+        if callable(target):
+            try:
+                dis.Bytecode(target)
+            except TypeError:
+                return None
+            imp = python_impl.PythonImplementation(target)
+            if imp.implements(interface):
+                return imp
     return None

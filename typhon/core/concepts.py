@@ -27,5 +27,5 @@ class AbstractImplementation:
     def get_result_type(self, types):
         raise NotImplementedError
 
-    def get_depedencies(self, types):
+    def get_dependencies(self, types):
         raise NotImplementedError

@@ -55,6 +55,15 @@ def k():
     return 0
 
 
+def add(a, b):
+    return a + b
+
+
+def m():
+    print(add(1, 3))
+    return 0
+
+
 if not os.path.exists("./temp"):
     os.mkdir("./temp")
 with open("temp/hello_world.c", "w") as fo:
@@ -71,3 +80,5 @@ except Exception as exc:
     print("Transpilation fails with exception:", exc)
 with open("temp/water_flower_number.c", "w") as fo:
     fo.write(typhon.generate_c(k))
+with open("temp/func_call.c", "w") as fo:
+    fo.write(typhon.generate_c(m))

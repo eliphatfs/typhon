@@ -6,14 +6,16 @@ Simulates the python stack machine.
 @author: eliphat
 """
 import opcode
-import collections
 from . import bytecode
 
 
-TranslationResult = collections.namedtuple(
-    "TranslationResult",
-    ["body", "impls", "variables"]
-)
+class TranslationResult:
+
+    def __init__(self, body, impls, variables, return_type):
+        self.body = body
+        self.impls = impls
+        self.variables = variables
+        self.return_type = return_type
 
 
 class StackMachineState:
@@ -31,7 +33,7 @@ class StackMachine:
 
     def __init__(self, bc):
         self.state = StackMachineState()
-        self.result = TranslationResult(list(), set(), dict())
+        self.result = TranslationResult(list(), set(), dict(), None)
         ctors = bytecode.get_constructors(self.usage)
         self.ops = list()
         for instr in bc:
@@ -56,7 +58,7 @@ class CodeGenerator(StackMachine):
 
     def __init__(self, bc, variables):
         super().__init__(bc)
-        self.result = TranslationResult(list(), set(), variables)
+        self.result = TranslationResult(list(), set(), variables, None)
         self.stack_var_id = 0
 
     def run(self):

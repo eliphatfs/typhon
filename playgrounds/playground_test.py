@@ -56,6 +56,24 @@ def f6():
     return range(10)[1:7:3]
 
 
+def f7(a, b):
+    return a + b
+
+
+def f8(a, b):
+    return f7(a, b)
+
+
+def dictify(obj, recursive=False):
+    d = dict()
+    for name in dir(obj):
+        if name in ['__globals__', '__locals__']:
+            continue
+        attr = getattr(obj, name)
+        d[name] = dictify(attr, True) if recursive else attr
+    return d
+
+
 class ErrorFloat:
 
     def __float__(self):
@@ -63,5 +81,5 @@ class ErrorFloat:
 
 
 if __name__ == "__main__":
-    dis.show_code(f2)
-    dis.dis(f2)
+    dis.show_code(f8)
+    dis.dis(f8)

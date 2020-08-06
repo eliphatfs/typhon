@@ -6,6 +6,7 @@ Created on Thu Aug  6 13:39:55 2020
 """
 import opcode
 from . import Usage, BaseOpcode
+from ..type_system import inference
 
 
 class ReturnValueOpcode(BaseOpcode):
@@ -15,6 +16,14 @@ class ReturnValueOpcode(BaseOpcode):
 
     def apply(self, state, result, action):
         state.stack.pop().reduce(set())
+
+
+class AnalyzerReturnValueOpcode(ReturnValueOpcode):
+    usage = Usage.Analyze
+
+    def apply(self, state, result, action):
+        t, _ = state.stack.pop().reduce(set())
+        result.return_type = inference.type_merge(result.return_type, t)
 
 
 class CodeGenReturnValue(ReturnValueOpcode):
