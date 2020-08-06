@@ -16,12 +16,13 @@ class PythonImplementation(AbstractImplementation):
         base_impls[func.__qualname__].append(self)
         self.func = func
         self.bc = dis.Bytecode(self.func)
+        self.env = self.func.__module__
         self.memoize = dict()
 
     def run_analyzer(self, types):
         if types in self.memoize:
             return self.memoize[types]
-        analyzer = stack_machine.Analyzer(self.bc)
+        analyzer = stack_machine.Analyzer(self.bc, self.env)
         self.memoize[types] = analyzer.result
         for i in range(self.bc.codeobj.co_argcount):
             name = self.bc.codeobj.co_varnames[i]
@@ -44,7 +45,7 @@ class PythonImplementation(AbstractImplementation):
             return False
 
     def run_generator(self, variables):
-        generator = stack_machine.CodeGenerator(self.bc, variables)
+        generator = stack_machine.CodeGenerator(self.bc, self.env, variables)
         generator.run()
         return generator.result
 

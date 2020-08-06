@@ -74,6 +74,14 @@ def dictify(obj, recursive=False):
     return d
 
 
+def f9():
+
+    def _f9(a=[]):
+        pass
+
+    return _f9
+
+
 class ErrorFloat:
 
     def __float__(self):
@@ -81,5 +89,5 @@ class ErrorFloat:
 
 
 if __name__ == "__main__":
-    dis.show_code(f8)
-    dis.dis(f8)
+    dis.show_code(f9)
+    dis.dis(f9)

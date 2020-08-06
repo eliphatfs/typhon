@@ -27,7 +27,7 @@ def resolve_impl_dependencies(impls):
 
 def generate_c(func):
     bc = dis.Bytecode(func)
-    result = core.stack_machine.translate(bc)
+    result = core.stack_machine.translate(bc, func.__module__)
     includes = set()
     impls = resolve_impl_dependencies(result.impls)
     for imp, interface in impls:

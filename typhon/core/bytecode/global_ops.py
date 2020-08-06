@@ -18,7 +18,7 @@ class LoadGlobalOpcode(BaseOpcode):
         import builtins
         instr = self.instr
         if not hasattr(builtins, instr.argval):
-            obj = getattr(sys.modules['__main__'], instr.argval)
+            obj = getattr(sys.modules[state.env], instr.argval)
             if callable(obj):
                 return state.stack.append(FuncApply(instr.argval))
             else:

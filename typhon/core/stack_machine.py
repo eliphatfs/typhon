@@ -20,8 +20,9 @@ class TranslationResult:
 
 class StackMachineState:
 
-    def __init__(self):
+    def __init__(self, env):
         self.blocks = [bytecode.StaticBlock(-1, -1, list())]
+        self.env = env
 
     @property
     def stack(self):
@@ -31,8 +32,8 @@ class StackMachineState:
 class StackMachine:
     usage = bytecode.Usage.General
 
-    def __init__(self, bc):
-        self.state = StackMachineState()
+    def __init__(self, bc, env):
+        self.state = StackMachineState(env)
         self.result = TranslationResult(list(), set(), dict(), None)
         ctors = bytecode.get_constructors(self.usage)
         self.ops = list()
@@ -56,8 +57,8 @@ class Analyzer(StackMachine):
 class CodeGenerator(StackMachine):
     usage = bytecode.Usage.CodeGen
 
-    def __init__(self, bc, variables):
-        super().__init__(bc)
+    def __init__(self, bc, env, variables):
+        super().__init__(bc, env)
         self.result = TranslationResult(list(), set(), variables, None)
         self.stack_var_id = 0
 
@@ -83,14 +84,14 @@ class CodeGenerator(StackMachine):
         self.state.stack[-1] = tv
 
 
-def translate(bc_obj):
+def translate(bc_obj, env):
     # Two step
     # Step 1: Infer variable types
-    analyzer = Analyzer(bc_obj)
+    analyzer = Analyzer(bc_obj, env)
     analyzer.run()
     assert len(analyzer.state.stack) == 0, "Side effects to stack."
     assert len(analyzer.state.blocks) == 1, "Side effects to static blocks."
-    generator = CodeGenerator(bc_obj, analyzer.result.variables)
+    generator = CodeGenerator(bc_obj, env, analyzer.result.variables)
     # Step 2: Generate body code
     generator.run()
     return generator.result
