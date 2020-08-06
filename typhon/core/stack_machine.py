@@ -7,7 +7,6 @@ Simulates the python stack machine.
 """
 import opcode
 import collections
-from .type_system import base_types
 from . import bytecode
 
 
