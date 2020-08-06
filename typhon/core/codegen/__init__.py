@@ -4,7 +4,7 @@ Created on Mon Aug  3 11:59:56 2020
 
 @author: eliphat
 """
-from ..type_system.concepts import Implementation, name_of
+from ..concepts import Implementation, name_of
 base_impls = []
 
 

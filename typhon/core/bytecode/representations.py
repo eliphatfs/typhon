@@ -4,7 +4,7 @@ Created on Thu Aug  6 13:12:53 2020
 
 @author: eliphat
 """
-from ..type_system import concepts
+from .. import concepts
 from ..type_system import base_types
 from .. import codegen
 

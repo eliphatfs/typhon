@@ -18,6 +18,15 @@ Implementation = namedtuple(
 )
 
 
+class AbstractImplementation:
+
+    def implements(self, interface):
+        raise NotImplementedError
+
+    def generate(self):
+        raise NotImplementedError
+
+
 def name_of(imp):
     return imp.name + "_" + str(abs(hash(imp)))
 
