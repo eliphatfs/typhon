@@ -4,21 +4,21 @@ Created on Mon Aug  3 11:59:56 2020
 
 @author: eliphat
 """
-from ..concepts import Implementation, name_of
-base_impls = []
+from collections import namedtuple, defaultdict
+from ..concepts import AbstractImplementation
 
 
-def impl(name, types, result_type, varnames, code, inc=None, inl=True):
-    if inc is None:
-        inc = tuple()
-    if isinstance(inc, str):
-        inc = (inc,)
-    base_impls.append(Implementation(
-        name, types, result_type, varnames, code, inc, inl
-    ))
+def BaseImplementationIndex():
+    return defaultdict(list)
 
 
-from . import numeric_impl, string_impl, range_impl
+base_impls = BaseImplementationIndex()
+
+
+Implementation = namedtuple(
+    "Implementation",
+    ["name", "types", "result_type", "varnames", "code", "include", "inline"]
+)
 
 
 gen_format = """
@@ -37,3 +37,45 @@ def generate(imp):
         modifier=modifier,
         var_list=var_list
     )
+
+
+class BootstrappingImplementation(Implementation, AbstractImplementation):
+
+    def implements(self, interface):
+        return self.name == interface.name and self.types == interface.types
+
+    def generate(self, types):
+        return generate(self)
+
+    def get_name(self):
+        return self.name
+
+    def get_result_type(self, types):
+        return self.result_type
+
+    def get_depedencies(self, types):
+        return tuple()
+
+
+def name_of(imp):
+    return imp.name + "_" + str(abs(hash(imp)))
+
+
+def impl(name, types, result_type, varnames, code, inc=None, inl=True):
+    if inc is None:
+        inc = tuple()
+    if isinstance(inc, str):
+        inc = (inc,)
+    base_impls[name].append(BootstrappingImplementation(
+        name, types, result_type, varnames, code, inc, inl
+    ))
+
+
+from . import numeric_impl, string_impl, range_impl
+
+
+def find_implementation(interface):
+    for imp in base_impls[interface.name]:
+        if imp.implements(interface):
+            return imp
+    return None

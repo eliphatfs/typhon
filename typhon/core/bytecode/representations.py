@@ -32,14 +32,14 @@ class FuncApply(Reduction):
             else:
                 raise TypeError("Non-reducible argument.")
         interface = concepts.Interface(self.name, tuple(a[0] for a in red))
-        self.impl = concepts.find_implementation(codegen.base_impls, interface)
+        self.impl = codegen.find_implementation(interface)
         if self.impl is None:
             raise TypeError("Interface %s is not implemented."
                             % repr(interface))
         impls.add(self.impl)
         return (
             self.impl.result_type,
-            (concepts.name_of(self.impl)
+            (codegen.name_of(self.impl)
              + "(" + ', '.join(a[1] for a in red) + ")")
         )
 

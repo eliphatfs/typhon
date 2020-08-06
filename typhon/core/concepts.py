@@ -12,27 +12,20 @@ Interface = namedtuple(
     ["name", "types"]
 )
 
-Implementation = namedtuple(
-    "Implementation",
-    ["name", "types", "result_type", "varnames", "code", "include", "inline"]
-)
-
 
 class AbstractImplementation:
 
     def implements(self, interface):
         raise NotImplementedError
 
-    def generate(self):
+    def generate(self, types):
         raise NotImplementedError
 
+    def get_name(self):
+        raise NotImplementedError
 
-def name_of(imp):
-    return imp.name + "_" + str(abs(hash(imp)))
+    def get_result_type(self, types):
+        raise NotImplementedError
 
-
-def find_implementation(collection, interface):
-    for imp in collection:
-        if imp.name == interface.name and imp.types == interface.types:
-            return imp
-    return None
+    def get_depedencies(self, types):
+        raise NotImplementedError
