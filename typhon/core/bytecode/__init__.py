@@ -6,6 +6,7 @@ Created on Thu Aug  6 11:38:24 2020
 """
 import enum
 import collections
+from ...utils import subclasses
 from .representations import Reduction, FuncApply, Constant, Variable, TempVar
 
 
@@ -41,14 +42,6 @@ from . import load_const_op, local_var_ops, loop_ops
 from . import return_val_op
 from . import stack_ops
 from . import unary_ops
-
-
-def subclasses(t):
-    direct = set(t.__subclasses__())
-    indirect = set()
-    for sub in direct:
-        indirect.update(subclasses(sub))
-    return direct.union(indirect)
 
 
 def get_constructors(usage):

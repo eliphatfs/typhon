@@ -4,7 +4,7 @@ Created on Mon Aug  3 18:46:37 2020
 
 @author: eliphat
 """
-from . import core
+from . import core, utils
 import dis
 
 
