@@ -14,7 +14,7 @@ def _resolve(ordered, visited, impl):
         obj, inter = impl
         for dependency in obj.get_dependencies(inter.types):
             _resolve(ordered, visited, dependency)
-    ordered.append(impl)
+        ordered.append(impl)
 
 
 def resolve_impl_dependencies(impls):
