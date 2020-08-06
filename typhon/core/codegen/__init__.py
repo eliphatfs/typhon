@@ -55,7 +55,7 @@ class BootstrappingImplementation(Implementation, AbstractImplementation):
     def get_result_type(self, types):
         return self.result_type
 
-    def get_depedencies(self, types):
+    def get_dependencies(self, types):
         return tuple()
 
 
