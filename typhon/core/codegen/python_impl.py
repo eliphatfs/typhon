@@ -21,8 +21,8 @@ class PythonImplementation(AbstractImplementation):
     def run_analyzer(self, types):
         if types in self.memoize:
             return self.memoize[types]
-        self.memoize[types] = None
         analyzer = stack_machine.Analyzer(self.bc)
+        self.memoize[types] = analyzer.result
         for i in range(self.bc.codeobj.co_argcount):
             name = self.bc.codeobj.co_varnames[i]
             v = representations.Variable(name)
@@ -39,6 +39,8 @@ class PythonImplementation(AbstractImplementation):
             self.run_analyzer(interface.types)
             return True
         except Exception:
+            import traceback
+            traceback.print_exc()
             return False
 
     def run_generator(self, variables):
@@ -56,7 +58,7 @@ class PythonImplementation(AbstractImplementation):
         return gen_format.format(
             result_type=self.get_result_type(types).c_name,
             name=name_of(self),
-            code=' ' * 4 + ';\n    '.join(result.body) + ";\n",
+            code='\n    ' + ';\n    '.join(result.body) + ";\n",
             modifier=modifier,
             var_list=var_list
         )
@@ -68,4 +70,6 @@ class PythonImplementation(AbstractImplementation):
         return self.run_analyzer(types).return_type
 
     def get_dependencies(self, types):
-        return self.run_generator().impls
+        result = self.run_analyzer(types)
+        result = self.run_generator(result.variables)
+        return result.impls

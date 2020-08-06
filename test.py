@@ -64,6 +64,17 @@ def m():
     return 0
 
 
+def fib(n):
+    if n <= 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+
+
+def n():
+    print(fib(int(input())))
+    return 0
+
+
 if not os.path.exists("./temp"):
     os.mkdir("./temp")
 with open("temp/hello_world.c", "w") as fo:
@@ -82,3 +93,5 @@ with open("temp/water_flower_number.c", "w") as fo:
     fo.write(typhon.generate_c(k))
 with open("temp/func_call.c", "w") as fo:
     fo.write(typhon.generate_c(m))
+with open("temp/fib.c", "w") as fo:
+    fo.write(typhon.generate_c(n))
