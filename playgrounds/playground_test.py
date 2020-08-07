@@ -82,6 +82,34 @@ def f9():
     return _f9
 
 
+def f10(haha):
+    return haha == haha in [haha]
+
+
+def f11():
+    for i in range(10):
+        try:
+            raise Exception("ERROR!")
+        finally:
+            break
+
+
+def f12():
+    for i in range(10):
+        try:
+            raise Exception("ERROR!")
+        finally:
+            pass
+
+
+class C:
+
+    @property
+    def prop(self):
+        print("HAHA I'm CALLED")
+        return '666'
+
+
 class ErrorFloat:
 
     def __float__(self):
@@ -89,5 +117,5 @@ class ErrorFloat:
 
 
 if __name__ == "__main__":
-    dis.show_code(f9)
-    dis.dis(f9)
+    dis.show_code(f10)
+    dis.dis(f10)
