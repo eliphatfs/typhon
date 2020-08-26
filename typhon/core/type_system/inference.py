@@ -63,4 +63,4 @@ def type_merge(t1, t2):
     if {t1, t2} == {base_types.PyInt, base_types.PyFloat}:
         return base_types.PyFloat
     raise TypeError("Multiple types for single value slot"
-                    "is not yet supported")
+                    " is not yet supported", t1, t2)

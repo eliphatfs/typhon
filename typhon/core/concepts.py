@@ -18,14 +18,17 @@ class AbstractImplementation:
     def implements(self, interface):
         raise NotImplementedError
 
-    def generate(self, types):
+    def generate(self):
         raise NotImplementedError
 
     def get_name(self):
         raise NotImplementedError
 
-    def get_result_type(self, types):
+    def get_result_type(self):
         raise NotImplementedError
 
-    def get_dependencies(self, types):
+    def get_used_types(self):
+        raise NotImplementedError
+
+    def get_dependencies(self):
         raise NotImplementedError

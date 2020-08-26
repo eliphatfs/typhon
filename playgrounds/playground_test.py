@@ -117,5 +117,5 @@ class ErrorFloat:
 
 
 if __name__ == "__main__":
-    dis.show_code(f10)
-    dis.dis(f10)
+    dis.show_code(f2)
+    dis.dis(f2)

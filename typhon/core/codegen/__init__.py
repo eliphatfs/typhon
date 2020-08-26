@@ -6,6 +6,7 @@ Created on Mon Aug  3 11:59:56 2020
 """
 import dis
 import sys
+import string
 from collections import namedtuple, defaultdict
 from ..concepts import AbstractImplementation
 
@@ -34,7 +35,7 @@ def generate(imp):
                          for t, b in zip(imp.types, imp.varnames))
     return gen_format.format(
         result_type=imp.result_type.c_name,
-        name=name_of(imp),
+        name=name_of(imp.name, imp.types),
         code=imp.code,
         modifier=modifier,
         var_list=var_list
@@ -46,21 +47,37 @@ class BootstrappingImplementation(Implementation, AbstractImplementation):
     def implements(self, interface):
         return self.name == interface.name and self.types == interface.types
 
-    def generate(self, types):
+    def generate(self):
         return generate(self)
 
     def get_name(self):
-        return self.name
+        return name_of(self.name, self.types)
 
-    def get_result_type(self, types):
+    def get_result_type(self):
         return self.result_type
 
-    def get_dependencies(self, types):
+    def get_used_types(self):
+        t = set(self.types)
+        t.add(self.result_type)
+        return t
+
+    def get_dependencies(self):
         return tuple()
 
 
-def name_of(imp):
-    return imp.get_name() + "_" + str(abs(hash(imp)))
+class Polymorphic:
+    def try_instantiate(self, interface, existence_mem):
+        raise NotImplementedError
+
+
+def identifierize(s):
+    return ''.join(map(lambda x: x if x in string.ascii_letters else '_', s))
+
+
+def name_of(name, types):
+    if len(types) == 0:
+        return name
+    return '_'.join([name] + [identifierize(t.c_name) for t in types])
 
 
 def impl(name, types, result_type, varnames, code, inc=None, inl=True):
@@ -73,10 +90,7 @@ def impl(name, types, result_type, varnames, code, inc=None, inl=True):
     ))
 
 
-from . import numeric_impl, string_impl, range_impl, python_impl
-
-
-def find_implementation(interface):
+def find_implementation(interface, existence_mem):
     for imp in base_impls[interface.name]:
         if imp.implements(interface):
             return imp
@@ -88,7 +102,13 @@ def find_implementation(interface):
                 dis.Bytecode(target)
             except TypeError:
                 return None
-            imp = python_impl.PythonImplementation(target)
-            if imp.implements(interface):
+            poly = python_impl.PythonAbstraction(target)
+            imp = poly.try_instantiate(interface, existence_mem)
+            if imp is not None:
+                base_impls[interface.name].append(imp)
                 return imp
     return None
+
+
+from . import numeric_impl, string_impl, range_impl, python_impl
+from . import generator_main

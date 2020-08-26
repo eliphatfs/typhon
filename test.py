@@ -51,7 +51,6 @@ def k():
         third = i % 10
         if i == first ** 3 + second ** 3 + third ** 3:
             print(i)
-            break
     return 0
 
 
