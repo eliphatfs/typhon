@@ -61,7 +61,9 @@ def transpile(cfg):
         return sir.BasicBlock("Block_" + uuid.uuid4().hex)
 
     def basic_block_for(n):
-        return node_to_block.get(n, new_basic_block())
+        if n not in node_to_block:
+            node_to_block[n] = new_basic_block()
+        return node_to_block[n]
 
     Q = queue.Queue()
     Q.put((cfg.start_node, State(), new_basic_block()))
