@@ -54,7 +54,9 @@ def generate(impl):
         elif isinstance(self, sir.Return):
             return "return %s" % genexpr(self.expr)
 
-    for var_var in impl.var_vars:
+    for var_var in impl.var_vars.keys():
+        if var_var in impl.inpvarnames:
+            continue
         body.append(impl.solved_types[impl.var_vars[var_var]].c_name
                     + " " + var_var)
     for block in impl.ir:
