@@ -74,6 +74,28 @@ def n():
     return 0
 
 
+def multiple_recur_a(x):
+    if x <= 0:
+        return x
+    return multiple_recur_b(x - 1)
+
+
+def multiple_recur_b(x):
+    return multiple_recur_c(x - 1)
+
+
+def multiple_recur_c(x):
+    return multiple_recur_a(x - 1)
+
+
+def multiple_recur():
+    y = int(input())
+    print(multiple_recur_b(y))
+    print(multiple_recur_c(y))
+    print(multiple_recur_a(y))
+    return 0
+
+
 if not os.path.exists("./temp"):
     os.mkdir("./temp")
 with open("temp/hello_world.c", "w") as fo:
@@ -94,3 +116,5 @@ with open("temp/func_call.c", "w") as fo:
     fo.write(typhon.generate_c(m))
 with open("temp/fib.c", "w") as fo:
     fo.write(typhon.generate_c(n))
+with open("temp/multi_recur.c", "w") as fo:
+    fo.write(typhon.generate_c(multiple_recur))
