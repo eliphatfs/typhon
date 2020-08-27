@@ -27,6 +27,9 @@ Implementation = namedtuple(
 gen_format = """
 {modifier} {result_type} {name} ({var_list}) {{{code}}}
 """
+tampered_format = """
+{tamper} {name} ({var_list}) {{{code}}}
+"""
 
 
 def generate(imp):

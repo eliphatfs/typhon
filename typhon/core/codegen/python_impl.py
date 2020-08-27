@@ -6,7 +6,7 @@ Created on Thu Aug  6 19:33:06 2020
 """
 import dis
 from . import AbstractImplementation, Polymorphic
-from . import gen_format, name_of
+from . import gen_format, name_of, tampered_format
 from . import generator_main
 from .. import bytecode
 from ..type_system import type_solver
@@ -64,13 +64,20 @@ class PythonImplementation(AbstractImplementation):
     def run_generator(self):
         return generator_main.generate(self)
 
-    def generate(self):
+    def generate(self, tamper_head=None):
         types = self.interface.types
         body, _ = self.run_generator()
-        modifier = ""
+        modifier = "static"
         varnames = self.bc.codeobj.co_varnames
         var_list = ', '.join(t.c_name + ' ' + b
                              for t, b in zip(types, varnames))
+        if tamper_head is not None:
+            return tampered_format.format(
+                tamper=tamper_head,
+                name=name_of(self.interface.name, self.interface.types),
+                code='\n    ' + ';\n    '.join(body) + ";\n",
+                var_list=var_list
+            )
         return gen_format.format(
             result_type=self.get_result_type().c_name,
             name=name_of(self.interface.name, self.interface.types),
