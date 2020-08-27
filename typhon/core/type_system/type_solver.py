@@ -5,12 +5,12 @@ Created on Wed Aug 26 09:21:17 2020
 @author: eliphat
 """
 import queue
+import collections
 from .. import simple_ir as sir
 from . import base_types
 from . import inference
 from .. import concepts
 from .. import codegen
-import functools
 
 
 Undecided = base_types.BaseType("Undecided", "#error Undecided type\n")
@@ -24,6 +24,7 @@ class VarType(Type):  # Variable
 
     def __init__(self, name):
         self.name = name
+        self.type = None
 
 
 class FuncResultType(Type):  # Interface construct
@@ -31,6 +32,7 @@ class FuncResultType(Type):  # Interface construct
     def __init__(self, func, inputs):
         self.func = func
         self.inputs = inputs
+        self.type = None
 
 
 def decl_type_vars(ir, arg_vars):
@@ -91,70 +93,78 @@ def get_equations(nodes, type_vars, arg_var_types):
     return leqs, inits
 
 
-def solve_var(type_var, leqs, facts, existence_mem):
-    my_type = None
-    facts[type_var] = Undecided
-    while True:
-        old_type = my_type
-        for lesser, greater in leqs:
-            if lesser is greater:
-                continue
-            if greater is type_var:
-                tau1 = solve_type(lesser, leqs, facts, existence_mem)
-                if tau1 is Undecided:
-                    continue
-                my_type = inference.type_merge(tau1, my_type)
-        if old_type == my_type:
-            break
-    facts[type_var] = my_type
-    return my_type
-
-
-def solve_func(type_var, leqs, facts, existence_mem):
-    solve = functools.partial(
-                solve_type,
-                leqs=leqs,
-                facts=facts,
-                existence_mem=existence_mem
-            )
-    interface = concepts.Interface(type_var.func,
-                                   tuple(map(solve, type_var.inputs)))
-    for x in interface.types:
-        if x is Undecided:
-            return Undecided
-    if interface in existence_mem:
-        return existence_mem[interface]
-    existence_mem[interface] = Undecided
-    impl = codegen.find_implementation(interface, existence_mem)
-    # Tries lambda and polymorphic types
-    # Maybe split out them for better patterns
-    if impl is None:
-        raise TypeError("No implementation for interface.", interface)
-    existence_mem[interface] = impl.get_result_type()
-    return existence_mem[interface]
-
-
-def solve_type(type_var, leqs, facts, existence_mem):
-    if type_var in facts:
-        return facts[type_var]
-    if isinstance(type_var, FuncResultType):
-        return solve_func(type_var, leqs, facts, existence_mem)
-    elif isinstance(type_var, VarType):
-        return solve_var(type_var, leqs, facts, existence_mem)
-    raise TypeError("Mismatched type var.", type_var)
-
-
 def solve_equations(type_vars, leqs, inits, existence_mem):
-    facts = dict()
+    booked = set()
+    Q = queue.Queue()
     for tau, t in inits:
-        facts[t] = tau
+        t.type = tau
+        booked.add(t)
+        Q.put(t)
+    leq_cache = collections.defaultdict(list)
+    for lesser, greater in leqs:
+        leq_cache[lesser].append(greater)
+    func_cache = collections.defaultdict(list)
+    fname_cache = collections.defaultdict(list)
     for tvar in type_vars.values():
-        facts[tvar] = solve_type(tvar, leqs, facts, existence_mem)
-    for tvar in type_vars.values():
-        if isinstance(tvar, VarType):
-            for lesser, greater in leqs:
-                if greater is tvar:
-                    tau1 = solve_type(lesser, leqs, facts, existence_mem)
-                    if inference.type_merge(tau1, facts[tvar]) != facts[tvar]:
-                        raise TypeError("Failed to find stable point.", tvar)
-    return facts
+        if isinstance(tvar, FuncResultType):
+            if len(tvar.inputs) == 0:
+                interface = concepts.Interface(tvar.func, ())
+                imp = codegen.find_implementation(interface, existence_mem)
+                if imp is None:
+                    raise TypeError("No implementation for interface.",
+                                    interface)
+                nt = inference.type_merge(tvar.type, imp.get_result_type())
+                if nt is not None:
+                    tvar.type = nt
+                    if tvar not in booked:
+                        booked.add(tvar)
+                        Q.put(tvar)
+            for s in tvar.inputs:
+                func_cache[s].append(tvar)
+            fname_cache[tvar.func].append(tvar)
+    while not Q.empty():
+        t = Q.get()
+        booked.remove(t)
+        for post in leq_cache[t]:
+            old = post.type
+            merged = inference.type_merge(old, t.type)
+            if old != merged:
+                post.type = merged
+                if isinstance(post, VarType):
+                    if post.name == '__return__':
+                        for i, exist_tv in existence_mem.items():
+                            if exist_tv.type is None:
+                                codegen.find_implementation(i, existence_mem)
+                                if exist_tv.type is not None:
+                                    for fvar in fname_cache[i.name]:
+                                        if fvar not in booked:
+                                            booked.add(fvar)
+                                            Q.put(fvar)
+                if post not in booked:
+                    booked.add(post)
+                    Q.put(post)
+        for post in func_cache[t]:
+            args = tuple(map(lambda x: x.type, post.inputs))
+            if any(x is None for x in args):
+                continue
+            interface = concepts.Interface(post.func, args)
+            if interface in existence_mem:
+                tx = existence_mem[interface].type
+                if tx is None:
+                    continue
+                post.type = inference.type_merge(post.type, tx)
+                if post not in booked:
+                    booked.add(post)
+                    Q.put(post)
+            else:
+                imp = codegen.find_implementation(interface, existence_mem)
+                if imp is None:
+                    raise TypeError("No implementation for interface.",
+                                    interface)
+                nt = inference.type_merge(post.type, imp.get_result_type())
+                if nt is not None:
+                    post.type = nt
+                    if post not in booked:
+                        booked.add(post)
+                        Q.put(post)
+    return {x: x.type for x in type_vars.values()}

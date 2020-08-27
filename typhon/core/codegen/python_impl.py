@@ -8,7 +8,7 @@ import dis
 from . import AbstractImplementation, Polymorphic
 from . import gen_format, name_of
 from . import generator_main
-from .. import type_system, bytecode
+from .. import bytecode
 from ..type_system import type_solver
 
 
@@ -32,6 +32,7 @@ class PythonAbstraction(Polymorphic):
             arg_vars[name] = v
             arg_types.append((interface.types[i], v))
         nodes, tvars, var_vars = type_solver.decl_type_vars(self.sir, arg_vars)
+        existence_mem[interface] = tvars["__return__"]
         leqs, inits = type_solver.get_equations(nodes, tvars, arg_types)
         try:
             facts = type_solver.solve_equations(tvars, leqs,
@@ -55,6 +56,7 @@ class PythonImplementation(AbstractImplementation):
         self.bc = bc
         self.var_vars = var_vars
         self.solved_types = solved_types
+        self.inpvarnames = bc.codeobj.co_varnames[:len(interface.types)]
 
     def implements(self, interface):
         return self.interface == interface

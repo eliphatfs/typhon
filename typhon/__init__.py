@@ -22,7 +22,7 @@ def dep_closure(initial):
 def generate_c(func):
     mian = core.codegen.python_impl\
         .PythonAbstraction(func)\
-        .try_instantiate(core.concepts.Interface("main", []), dict(), 'raise')
+        .try_instantiate(core.concepts.Interface("main", ()), dict(), 'raise')
     mian_dep = mian.get_dependencies()
     all_dep = dep_closure(mian_dep)
     all_dep.add(mian)
