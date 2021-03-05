@@ -12,13 +12,13 @@ Supports:
 - Part of `str` type
 - `while`, `if` and `for` statements
 - Builtins: `input` and `print`
-- Python version: Tested on 3.5, should support anywhere from 3.2 to 3.7
+- Python version: Tested on 3.5, should support anywhere from 3.2 to 3.8
 
 ## Roadmap
 (Near)
 - Support for `is`, `is not` and other conditionals
 - Support for `tuple` type and handling sum types
-- Support for `break` (Needs to handle dynamic CFG)
+- Support for `break` on python <= 3.7 (Needs to handle dynamic CFG)
 
 (Moderate)
 - Support for `list` type
