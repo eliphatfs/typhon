@@ -23,10 +23,13 @@ class BottomType(TyphonType):
 
 
 class FunctionType(TyphonType):
-    def __init__(self, arg_types, return_type, name=None):
+    def __init__(self, arg_types, return_type):
         self.r = return_type
         self.args = arg_types
-        self.name = name or "<anonymous type %d>" % id(self)
+
+    @property
+    def name(self):
+        return "(" + ', '.join(x.name for x in self.args) + ") -> " + self.r.name
 
     def __eq__(self, other):
         if isinstance(other, FunctionType):
@@ -34,6 +37,15 @@ class FunctionType(TyphonType):
                 if all(L == R for L, R in zip(self.args, other.args)):
                     return True
         return False
+
+    def __or__(self, other):
+        if self == other:
+            return self
+        elif isinstance(other, FunctionType):
+            raise TypeError("Union between '->' types are not yet supported. " + 
+                            "Called on: %s and %s"
+                            % (self.name, other.name))
+        return NotImplemented
 
 
 class TypeRecord(TyphonType):
@@ -52,7 +64,10 @@ class TypeRecord(TyphonType):
         return False
 
     def __or__(self, other):
-        if isinstance(other, TypeRecord):
-            if self.name == other.name:
-                return self
+        if self == other:
+            return self
+        elif isinstance(other, TypeRecord):
+            raise TypeError("Union between records are not yet supported. " + 
+                            "Called on: %s and %s"
+                            % (self.name, other.name))
         return NotImplemented
