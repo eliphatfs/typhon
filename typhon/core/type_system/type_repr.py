@@ -18,6 +18,9 @@ class BottomType(TyphonType):
     def __ror__(self, other):
         return other
 
+    def __eq__(self, other):
+        return isinstance(other, BottomType)
+
 
 class FunctionType(TyphonType):
     def __init__(self, arg_types, return_type, name=None):
@@ -25,15 +28,28 @@ class FunctionType(TyphonType):
         self.args = arg_types
         self.name = name or "<anonymous type %d>" % id(self)
 
+    def __eq__(self, other):
+        if isinstance(other, FunctionType):
+            if self.r == other.r:
+                if all(L == R for L, R in zip(self.args, other.args)):
+                    return True
+        return False
+
 
 class TypeRecord(TyphonType):
     def __init__(self, qualified_name, member_dict):
         self.members = member_dict
         self.name = qualified_name
         # Every record type should be decided by its qualified name
+        # Is this true?
 
     def add_function_member(self, name, func):
         self.members[name] = func
+
+    def __eq__(self, other):
+        if isinstance(other, TypeRecord):
+            return self.name == other.name
+        return False
 
     def __or__(self, other):
         if isinstance(other, TypeRecord):
