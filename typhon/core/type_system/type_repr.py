@@ -5,7 +5,8 @@ Created on Sat Mar  6 19:35:15 2021
 @author: eliphat
 """
 class TyphonType:
-    pass
+    def __init__(self):
+        self.name = "<undefined type>"
 
 
 class BottomType(TyphonType):
