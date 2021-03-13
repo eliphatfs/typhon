@@ -49,7 +49,7 @@ class FunctionType(TyphonType):
         return NotImplemented
 
 
-class TypeRecord(TyphonType):
+class RecordType(TyphonType):
     def __init__(self, qualified_name, member_dict):
         self.members = member_dict
         self.name = qualified_name
@@ -60,14 +60,14 @@ class TypeRecord(TyphonType):
         self.members[name] = func
 
     def __eq__(self, other):
-        if isinstance(other, TypeRecord):
+        if isinstance(other, RecordType):
             return self.name == other.name
         return False
 
     def __or__(self, other):
         if self == other:
             return self
-        elif isinstance(other, TypeRecord):
+        elif isinstance(other, RecordType):
             raise TypeError("Union between records are not yet supported. " + 
                             "Called on: %s and %s"
                             % (self.name, other.name))
