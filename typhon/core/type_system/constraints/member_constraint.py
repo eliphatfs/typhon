@@ -34,6 +34,7 @@ class MemberConstraint(BaseConstraint):
                     ts.add_constraint(EqualityConstraint(self.dst, rec))
                 else:
                     self.dst.T = rec
+                return
         raise TypeError("Type %s does not have member %s" % (T, self.k))
 
     def is_resolved(self):
