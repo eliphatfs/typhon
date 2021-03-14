@@ -19,8 +19,8 @@ class FixedConstraint(BaseConstraint):
     def effect_vars(self):
         return [self.v]
 
-    def fix(self):
+    def fix(self, ts):
         self.v.T = self.T
 
     def is_resolved(self):
-        return self.v.T == self.T
+        return True

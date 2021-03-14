@@ -19,8 +19,8 @@ class SubtypeConstraint(BaseConstraint):
     def effect_vars(self):
         return [self.dst]
 
-    def fix(self):
+    def fix(self, ts):
         self.dst.T = self.dst.T | self.src.T
 
     def is_resolved(self):
-        return self.dst.T == self.dst.T | self.src.T
+        return True

@@ -6,7 +6,9 @@ Created on Sun Mar 14 09:40:01 2021
 """
 from ..type_var import TypeVar
 from ..type_repr import RecordType, BottomType
+from ..system import TypeSystem
 from .base_constraint import BaseConstraint
+from .equality_constraint import EqualityConstraint
 
 
 class MemberConstraint(BaseConstraint):
@@ -21,16 +23,18 @@ class MemberConstraint(BaseConstraint):
     def effect_vars(self):
         return [self.dst]
 
-    def fix(self):
+    def fix(self, ts: TypeSystem):
         T = self.src.T
         if isinstance(T, BottomType):
             return
         if isinstance(T, RecordType):
             if self.k in T.members:
-                self.dst.T = T.members[self.k]
+                rec = T.members[self.k]
+                if isinstance(rec, TypeVar):
+                    ts.add_constraint(EqualityConstraint(self.dst, rec))
+                else:
+                    self.dst.T = rec
         raise TypeError("Type %s does not have member %s" % (T, self.k))
 
     def is_resolved(self):
-        ST = self.src.T
-        DT = self.dst.T
-        return isinstance(ST, RecordType) and DT == ST.members.get(self.k)
+        return isinstance(self.src.T, RecordType)

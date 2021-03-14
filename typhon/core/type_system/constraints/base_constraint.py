@@ -12,8 +12,9 @@ class BaseConstraint:
     def effect_vars(self):
         raise NotImplementedError()
 
-    def fix(self):
+    def fix(self, ts):
         raise NotImplementedError()
 
     def is_resolved(self):
+        # is_resolved will be called after fix
         raise NotImplementedError()

@@ -27,7 +27,8 @@ class AbstractVariable:
         self.T = type_var
 
 
-class ConcreteFunction:
+class PolymorphicFunction:
     def __init__(self, root_node, qualified_name):
         self.name = qualified_name
         self.root = root_node
+        self.instances = []
