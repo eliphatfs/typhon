@@ -13,3 +13,21 @@ class BaseNode:
 
     def typing(self, type_system):
         pass
+
+
+class DeterminedValue:
+    def __init__(self, type_var, val):
+        self.v = val
+        self.T = type_var
+
+
+class AbstractVariable:
+    def __init__(self, type_var, name):
+        self.name = name
+        self.T = type_var
+
+
+class ConcreteFunction:
+    def __init__(self, root_node, qualified_name):
+        self.name = qualified_name
+        self.root = root_node
