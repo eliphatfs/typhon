@@ -4,12 +4,12 @@ Created on Mon Mar 15 09:14:02 2021
 
 @author: eliphat
 """
-import typing
+from typing import List
 from .base_node import ExprNode
 from ..type_system import TypeVar, TypeSystem, FuncCallConstraint
 
 class FuncCallNode(ExprNode):
-    def __init__(self, env, func_node: ExprNode, args_nodes: typing.List[ExprNode]):
+    def __init__(self, env, func_node: ExprNode, args_nodes: List[ExprNode]):
         super().__init__(env)
         self.func_node = func_node
         self.args_nodes = args_nodes
