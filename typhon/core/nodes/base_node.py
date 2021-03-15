@@ -15,16 +15,21 @@ class BaseNode:
         pass
 
 
+class ExprNode(BaseNode):
+    def value_type_var(self):
+        raise NotImplementedError()
+
+
 class DeterminedValue:
     def __init__(self, type_var, val):
         self.v = val
-        self.T = type_var
+        self.TV = type_var
 
 
 class AbstractVariable:
     def __init__(self, type_var, name):
         self.name = name
-        self.T = type_var
+        self.TV = type_var
 
 
 class PolymorphicFunction:

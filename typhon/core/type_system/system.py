@@ -22,9 +22,11 @@ class TypeSystem:
     def add_var(self, v: TypeVar):
         if isinstance(v, TypeVar):
             self.type_vars.append(v)
+            return v
         raise TypeError("add_var called with wrong type: " + str(type(v)))
 
     def add_constraint(self, cn: BaseConstraint):
         if isinstance(cn, BaseConstraint):
             self.type_constraints.append(cn)
+            return cn
         raise TypeError("add_constraint called with wrong type: " + str(type(cn)))

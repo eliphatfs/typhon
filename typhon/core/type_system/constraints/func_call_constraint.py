@@ -15,7 +15,7 @@ class FuncCallConstraint(BaseConstraint):
         self.F = func_var
         self.R = ret_var
         self.args = args
-    
+
     def cause_vars(self):
         return [self.F]
 
