@@ -28,7 +28,7 @@ class DeterminedValue:
 
 class AbstractVariable:
     def __init__(self, type_var, name):
-        self.name = name
+        self.name = name  # local name
         self.TV = type_var
 
 
