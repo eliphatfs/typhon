@@ -4,9 +4,9 @@ Created on Sun Mar  7 12:05:21 2021
 
 @author: eliphat
 """
-from ..type_repr import TypeRecord, FunctionType
+from ..type_repr import RecordType, FunctionType
 
-py_int = TypeRecord("builtins.int", {})
+py_int = RecordType("builtins.int", {})
 py_int.add_function_member("__add__", FunctionType([py_int], py_int))
 py_int.add_function_member("__sub__", FunctionType([py_int], py_int))
 py_int.add_function_member("__mul__", FunctionType([py_int], py_int))
