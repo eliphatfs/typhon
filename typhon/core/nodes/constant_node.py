@@ -20,3 +20,6 @@ class ConstantNode(ExprNode):
 
     def value_type_var(self):
         return self.typed_c.TV
+
+    def __str__(self):
+        return "Constant %s" % self.c
