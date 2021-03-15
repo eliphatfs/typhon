@@ -31,15 +31,15 @@ class FuncCallConstraint(BaseConstraint):
                     "Function %s requires %d args, got %d"
                     % (self.F, len(self.F.T.args), len(self.args))
                 )
-            for i, ao, an in enumerate(zip(self.F.T.args, self.args)):
+            for i, (ao, an) in enumerate(zip(self.F.T.args, self.args)):
                 if isinstance(an, BottomType):
                     return
-                if ao != an:
+                if ao != an.T:
                     raise TypeError(
                         "Function %s got inconsistent type %s at arg %d"
-                        % (self.F, an, i)
+                        % (self.F, an.T, i)
                     )
-            self.R = self.F.T.r
+            self.R.T = self.F.T.r
             return
         raise TypeError("%s is not a function" % self.F)
 
