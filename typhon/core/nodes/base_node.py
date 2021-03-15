@@ -14,6 +14,19 @@ class BaseNode:
     def typing(self, type_system):
         pass
 
+    def pprint(self, depth=0):
+        children = self.children()
+        me = "  " * depth + type(self).__name__
+        if type(self).__str__ is not object.__str__:
+            me += "[" + str(self) + ']'
+        lines = [me]
+        for child in children:
+            lines.append(child.pprint(depth + 1))
+        return '\n'.join(lines)
+
+    def __repr__(self):
+        return self.pprint()
+
 
 class StmtNode(BaseNode):
     pass
