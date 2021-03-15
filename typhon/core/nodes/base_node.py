@@ -15,6 +15,10 @@ class BaseNode:
         pass
 
 
+class StmtNode(BaseNode):
+    pass
+
+
 class ExprNode(BaseNode):
     def value_type_var(self):
         raise NotImplementedError()
