@@ -11,3 +11,9 @@ class TypeVar:
         self.name = name  # name for debugging and error reporting
         self.T = init_type or BottomType()
         self.func_srcs = set()
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return str(self)
