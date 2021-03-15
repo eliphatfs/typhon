@@ -14,7 +14,7 @@ class ConstantNode(ExprNode):
         self.typed_c = None
 
     def typing(self, ts: TypeSystem):
-        vc = ts.add_var(TypeVar("Constant %s" % self.c))
+        vc = ts.add_var(TypeVar("%s" % self.c))
         ts.add_constraint(FixedConstraint(vc, ts.query_val_type(self.c)))
         self.typed_c = DeterminedValue(vc, self.c)
 

@@ -16,7 +16,7 @@ class AttributeNode(ExprNode):
         self.ret_var = None
 
     def typing(self, ts: TypeSystem):
-        vc = ts.add_var(TypeVar("%s.%s" % (self.base_node, self.label)))
+        vc = ts.add_var(TypeVar("%s.%s" % (self.base_node.value_type_var().name, self.label)))
         ts.add_constraint(MemberConstraint(
             vc,
             self.base_node.value_type_var(),
