@@ -24,5 +24,8 @@ class AttributeNode(ExprNode):
         ))
         self.ret_var = vc
 
+    def children(self):
+        return [self.base_node]
+
     def value_type_var(self):
         return self.ret_var

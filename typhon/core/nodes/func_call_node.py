@@ -24,5 +24,8 @@ class FuncCallNode(ExprNode):
         ))
         self.ret_var = vc
 
+    def children(self):
+        return [self.func_node] + self.args_nodes
+
     def value_type_var(self):
         return self.ret_var
