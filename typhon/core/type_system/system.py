@@ -30,3 +30,13 @@ class TypeSystem:
             self.type_constraints.append(cn)
             return cn
         raise TypeError("add_constraint called with wrong type: " + str(type(cn)))
+
+    def solve(self):
+        flag = True
+        while flag:
+            flag = False
+            for c in self.type_constraints:
+                c.fix(self)
+                if not c.is_resolved():
+                    flag = True
+        return self
