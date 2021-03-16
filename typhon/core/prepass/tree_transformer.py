@@ -36,6 +36,14 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
                               % type(ast_node))
 
 
+bin_op_map = {
+    ast.Add: "__add__",
+    ast.Sub: "__sub__",
+    ast.Mult: "__mul__",
+    ast.FloorDiv: "__floordiv__",
+}
+
+
 def typhon_expr(env: NodeEnv, ast_node: ast.expr):
     if not isinstance(ast_node, ast.expr):
         raise TypeError("Malformed AST: got %s for expr." % ast.dump(ast_node))
@@ -46,9 +54,9 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
     if isinstance(ast_node, ast.BinOp):
         left = typhon_expr(env, ast_node.left)
         right = typhon_expr(env, ast_node.right)
-        if isinstance(ast_node.op, ast.Add):
-            f_add = AttributeNode(env, left, "__add__")
-            return FuncCallNode(env, f_add, [right])
+        if type(ast_node.op) in bin_op_map:
+            f_ov = AttributeNode(env, left, bin_op_map[type(ast_node.op)])
+            return FuncCallNode(env, f_ov, [right])
         raise NotImplementedError("Op %s is not yet supported."
                                   % type(ast_node.op))
     raise NotImplementedError("%s is not supported as an expression yet."
