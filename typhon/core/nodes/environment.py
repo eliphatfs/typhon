@@ -7,7 +7,8 @@ Created on Mon Mar 15 10:46:02 2021
 
 
 class NodeEnv:
-    def __init__(self):
+    def __init__(self, qualname):
+        self.qualname = qualname
         self.bindings = dict()
 
     def query_name(self, name):
