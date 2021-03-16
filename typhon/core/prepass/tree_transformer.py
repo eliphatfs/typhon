@@ -7,7 +7,7 @@ Created on Mon Mar 15 15:51:36 2021
 import ast
 from typing import Optional
 
-from ..nodes import BaseNode, ExprStmtNode
+from ..nodes import BaseNode, ExprStmtNode, PlaceholderStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode
 
 
@@ -16,7 +16,7 @@ def typhon_stmt(env, ast_node: ast.stmt):
         raise TypeError("Malformed AST: got %s for stmt." % ast.dump(ast_node))
     # Section - trivial
     if isinstance(ast_node, ast.Pass):
-        return None
+        return PlaceholderStmtNode(env)
     # Section - stmt
     if isinstance(ast_node, ast.Expr):
         sexpr = typhon_expr(env, ast_node.value)
