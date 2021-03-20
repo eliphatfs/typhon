@@ -5,7 +5,7 @@ Created on Sat Mar 13 22:09:19 2021
 @author: eliphat
 """
 from .type_var import TypeVar
-from .type_repr import RecordType, FunctionType, BottomType, TyphonType
+from .type_repr import RecordType, FunctionType, BottomType, TyphonType, PolymorphicType
 from .constraints.base_constraint import BaseConstraint
 from .system import TypeSystem
 from .constraints.fixed_constraint import FixedConstraint

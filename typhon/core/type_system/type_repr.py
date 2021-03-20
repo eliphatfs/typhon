@@ -68,7 +68,25 @@ class RecordType(TyphonType):
         if self == other:
             return self
         elif isinstance(other, RecordType):
-            raise TypeError("Union between records are not yet supported. " + 
+            raise TypeError("Union between records are not yet supported. " +
+                            "Called on: %s and %s"
+                            % (self.name, other.name))
+        return NotImplemented
+
+
+class PolymorphicType(TyphonType):
+    def __init__(self, name, subs):
+        self.name = name
+        self.subs = subs
+
+    def __eq__(self, other):
+        return isinstance(other, PolymorphicType) and other.subs == self.subs
+
+    def __or__(self, other):
+        if self == other:
+            return self
+        elif isinstance(other, PolymorphicType):
+            raise TypeError("Union between polymorphic types are not yet supported. " +
                             "Called on: %s and %s"
                             % (self.name, other.name))
         return NotImplemented
