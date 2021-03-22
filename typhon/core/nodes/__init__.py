@@ -12,3 +12,5 @@ from .environment import NodeEnv
 from .func_call_node import FuncCallNode
 from .placeholder_stmt_node import PlaceholderStmtNode
 from .load_node import LoadNode
+from .func_def_node import FuncDefNode
+from .return_node import ReturnStmtNode
