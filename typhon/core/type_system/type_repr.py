@@ -85,6 +85,9 @@ class PolymorphicType(TyphonType):
     def __or__(self, other):
         if self == other:
             return self
+        elif isinstance(other, FunctionType):
+            if other in self.subs:
+                return other
         elif isinstance(other, PolymorphicType):
             raise TypeError("Union between polymorphic types are not yet supported. " +
                             "Called on: %s and %s"

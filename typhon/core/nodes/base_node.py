@@ -4,6 +4,7 @@ Created on Sat Mar  6 13:13:08 2021
 
 @author: eliphat
 """
+from ..type_system import PolymorphicType
 from ..type_system.type_var import TypeVar
 
 
@@ -45,9 +46,16 @@ class RootNodeMixin:
         for c in env.children:
             self.add_env_typevars(c, ts)
         for abs_var in env.bindings.values():
-            abs_var.TV = TypeVar(
-                env.qualname + abs_var.name
-            )
+            if abs_var.func_binding is not None:
+                abs_var.TV = TypeVar(
+                    env.qualname + abs_var.name,
+                    init_type=PolymorphicType(abs_var.name, [])
+                )
+                abs_var.TV.func_srcs.add(abs_var.func_binding)
+            else:
+                abs_var.TV = TypeVar(
+                    env.qualname + abs_var.name
+                )
             ts.add_var(abs_var.TV)
 
     def typing_sub(self, node, ts):
@@ -68,9 +76,10 @@ class DeterminedValue:
 
 
 class AbstractVariable:
-    def __init__(self, type_var, name):
+    def __init__(self, type_var, name, func_binding=None):
         self.name = name  # local name
         self.TV = type_var
+        self.func_binding = func_binding
 
 
 class PolymorphicFunction:
