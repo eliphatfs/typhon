@@ -4,6 +4,9 @@ Created on Sat Mar  6 13:13:08 2021
 
 @author: eliphat
 """
+from ..type_system.type_var import TypeVar
+
+
 class BaseNode:
     def __init__(self, env):
         self.env = env
@@ -30,6 +33,27 @@ class BaseNode:
 
 class StmtNode(BaseNode):
     pass
+
+
+class RootNodeMixin:
+
+    def typing_all_subs(self, type_system):
+        self.add_env_typevars(self.env, type_system)
+        self.typing_sub(self, type_system)
+
+    def add_env_typevars(self, env, ts):
+        for c in env.children:
+            self.add_env_typevars(c, ts)
+        for abs_var in env.bindings.values():
+            abs_var.TV = TypeVar(
+                env.qualname + abs_var.name
+            )
+            ts.add_var(abs_var.TV)
+
+    def typing_sub(self, node, ts):
+        for c in node.children():
+            self.typing_sub(c, ts)
+        node.typing(ts)
 
 
 class ExprNode(BaseNode):
