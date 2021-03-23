@@ -41,6 +41,10 @@ bin_op_map = {
     ast.Sub: "__sub__",
     ast.Mult: "__mul__",
     ast.FloorDiv: "__floordiv__",
+    ast.Mod: "__mod__",
+    ast.MatMult: "__matmul__",
+    ast.LShift: "__lshift__",
+    ast.RShift: "__rshift__",
 }
 
 
