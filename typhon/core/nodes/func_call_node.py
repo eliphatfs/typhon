@@ -18,7 +18,7 @@ class FuncCallNode(ExprNode):
     def typing(self, ts: TypeSystem):
         callee_name = self.func_node.value_type_var().name
         args_names = ", ".join([arg.value_type_var().name for arg in self.args_nodes])
-        vc = ts.add_var(TypeVar("%s(%s) > RET" % (callee_name, args_names)))
+        vc = ts.add_var(TypeVar("%s(%s) > $RET" % (callee_name, args_names)))
         ts.add_constraint(FuncCallConstraint(
             self.func_node.value_type_var(),
             vc,
