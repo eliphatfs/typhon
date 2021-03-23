@@ -5,6 +5,6 @@ As systems with polymorphism are generally undecidable, we take approximations.
 
 To support more constructs the project is undergoing a refactorization. Stay tuned!
 
-## Status: Rebulding
+## Status: Rebuilding
 Supports:
 - Basically, nothing
