@@ -7,6 +7,7 @@ Created on Sun Mar 14 19:04:35 2021
 import typing
 from ..type_var import TypeVar
 from ..type_repr import BottomType, FunctionType, PolymorphicType
+from ..intrinsics.intrinsic_function import IntrinsicFunction
 from .base_constraint import BaseConstraint
 from .subtype_constraint import SubtypeConstraint
 
@@ -17,9 +18,10 @@ class FuncCallConstraint(BaseConstraint):
         self.R = ret_var
         self.args = args
         self.recorded_return_union = set()
+        self.last_intrinsic = None
 
     def cause_vars(self):
-        return [self.F]
+        return [self.F] + self.args
 
     def effect_vars(self):
         return [self.R]
@@ -31,8 +33,6 @@ class FuncCallConstraint(BaseConstraint):
                     % (self.F, len(func_type.args), len(self.args))
                 )
         for i, (ao, an) in enumerate(zip(func_type.args, self.args)):
-            if isinstance(an.T, BottomType):
-                return None
             if ao != an.T:
                 return TypeError(
                     "Function %s got inconsistent type %s at arg %d"
@@ -43,10 +43,14 @@ class FuncCallConstraint(BaseConstraint):
     def fix(self, ts):
         if isinstance(self.F.T, BottomType):
             return
+        for v in self.args:
+            if isinstance(v.T, BottomType):
+                return
+        if isinstance(self.F.T, IntrinsicFunction):
+            if self.last_intrinsic is not self.F.T:
+                self.last_intrinsic = self.F.T
+                self.F.T(self.R, self.args)
         if isinstance(self.F.T, PolymorphicType):
-            for v in self.args:
-                if isinstance(v.T, BottomType):
-                    return
             for f_src in self.F.T.func_srcs:
                 inst = f_src.expand_on_args(
                     ts,
