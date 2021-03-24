@@ -8,7 +8,7 @@ import ast
 
 from ..type_system.type_var import TypeVar
 from ..nodes import NodeEnv, AbstractVariable
-from ..nodes import PlaceholderStmtNode, AssignStmtNode
+from ..nodes import PlaceholderStmtNode, AssignStmtNode, ExprStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
 from ..nodes import ReturnStmtNode, FuncDefNode
 
@@ -42,6 +42,7 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
     # Section - stmt
     if isinstance(ast_node, ast.Expr):
         sexpr = typhon_expr(env, ast_node.value)
+        return ExprStmtNode(env, sexpr)
     if isinstance(ast_node, ast.Return):
         sexpr = typhon_expr(env, ast_node.value)
         # TODO: support empty return statements
@@ -84,6 +85,13 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
         return ConstantNode(env, ast_node.value)
     if isinstance(ast_node, ast.Name):
         return LoadNode(env, ast_node.id)
+    if isinstance(ast_node, ast.Call):
+        return FuncCallNode(env,
+            typhon_expr(env, ast_node.func),
+            [typhon_expr(env, arg) for arg in ast_node.args]
+        )
+    if isinstance(ast_node, ast.Attribute):
+        return AttributeNode(env, typhon_expr(env, ast_node.value), ast_node.attr)
     if isinstance(ast_node, ast.BinOp):
         left = typhon_expr(env, ast_node.left)
         right = typhon_expr(env, ast_node.right)
