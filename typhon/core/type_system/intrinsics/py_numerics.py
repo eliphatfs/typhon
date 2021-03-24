@@ -19,7 +19,9 @@ py_int.add_function_member("__and__", FunctionType([py_int], py_int))
 py_int.add_function_member("__xor__", FunctionType([py_int], py_int))
 py_int.add_function_member("__or__", FunctionType([py_int], py_int))
 py_int.add_function_member("__pow__", FunctionType([py_int], py_int))
+
 py_int.add_function_member("__neg__", FunctionType([], py_int))
 py_int.add_function_member("__pos__", FunctionType([], py_int))
 py_int.add_function_member("__invert__", FunctionType([], py_int))
+
 py_int.add_function_member("__bool__", FunctionType([], py_bool))
