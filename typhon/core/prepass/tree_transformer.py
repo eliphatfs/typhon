@@ -11,6 +11,7 @@ from ..nodes import NodeEnv, AbstractVariable
 from ..nodes import PlaceholderStmtNode, AssignStmtNode, ExprStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
 from ..nodes import ReturnStmtNode, FuncDefNode
+from ..nodes import IfNode, WhileNode
 
 
 class PolymorphicFunction:
@@ -55,6 +56,20 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
         sexpr = typhon_expr(env, ast_node.value)
         # TODO: support empty return statements
         return ReturnStmtNode(env, sexpr)
+    if isinstance(ast_node, (ast.If, ast.While)):
+        test = typhon_expr(env, ast_node.test)
+        f_bo = AttributeNode(env, test, '__bool__')
+        test_tr = FuncCallNode(env, f_bo, [])
+        if isinstance(ast_node, ast.If):
+            return IfNode(env,
+                          test_tr,
+                          typhon_body(env, ast_node.body),
+                          typhon_body(env, ast_node.orelse))
+        if isinstance(ast_node, ast.While):
+            return WhileNode(env,
+                             test_tr,
+                             typhon_body(env, ast_node.body),
+                             typhon_body(env, ast_node.orelse))
     if isinstance(ast_node, ast.FunctionDef):
         name = ast_node.name
         if name not in env.bindings:
@@ -114,8 +129,11 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
                               % type(ast_node))
 
 
+def typhon_body(env: NodeEnv, stmts):
+    return [typhon_stmt(env, s) for s in stmts]
+
+
 def typhon_tree(env: NodeEnv, ast_node: ast.AST) -> FuncDefNode:
     if isinstance(ast_node, (ast.Module, ast.FunctionDef)):
-        body = [typhon_stmt(env, s) for s in ast_node.body]
-        return FuncDefNode(env, body)
+        return FuncDefNode(env, typhon_body(env, ast_node.body))
     raise TypeError("AST root should be Module or FuncDef.")
