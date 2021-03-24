@@ -23,6 +23,7 @@ class PolymorphicFunction:
             if args == args_types:
                 return inst
         nenv = NodeEnv(env.qualname + self.root.name + " > ", env)
+        nenv.bindings["@RET"] = AbstractVariable(TypeVar(nenv.qualname + "@RET"), "@RET")
         for arg, T in zip(self.root.args.args, args_types):
             nenv.bindings[arg.arg] = AbstractVariable(TypeVar(
                 nenv.qualname + arg.arg, T),
