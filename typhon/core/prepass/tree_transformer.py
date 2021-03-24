@@ -45,16 +45,12 @@ class PolymorphicFunction:
 def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
     if not isinstance(ast_node, ast.stmt):
         raise TypeError("Malformed AST: got %s for stmt." % ast.dump(ast_node))
-    # Section - trivial
-    if isinstance(ast_node, ast.Pass):
-        return PlaceholderStmtNode(env)
     # Section - stmt
     if isinstance(ast_node, ast.Expr):
         sexpr = typhon_expr(env, ast_node.value)
         return ExprStmtNode(env, sexpr)
     if isinstance(ast_node, ast.Return):
         sexpr = typhon_expr(env, ast_node.value)
-        # TODO: support empty return statements
         return ReturnStmtNode(env, sexpr)
     if isinstance(ast_node, (ast.If, ast.While)):
         test = typhon_expr(env, ast_node.test)
@@ -91,18 +87,6 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
                               % type(ast_node))
 
 
-bin_op_map = {
-    ast.Add: "__add__",
-    ast.Sub: "__sub__",
-    ast.Mult: "__mul__",
-    ast.FloorDiv: "__floordiv__",
-    ast.Mod: "__mod__",
-    ast.MatMult: "__matmul__",
-    ast.LShift: "__lshift__",
-    ast.RShift: "__rshift__",
-}
-
-
 def typhon_expr(env: NodeEnv, ast_node: ast.expr):
     if not isinstance(ast_node, ast.expr):
         raise TypeError("Malformed AST: got %s for expr." % ast.dump(ast_node))
@@ -117,14 +101,6 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
         )
     if isinstance(ast_node, ast.Attribute):
         return AttributeNode(env, typhon_expr(env, ast_node.value), ast_node.attr)
-    if isinstance(ast_node, ast.BinOp):
-        left = typhon_expr(env, ast_node.left)
-        right = typhon_expr(env, ast_node.right)
-        if type(ast_node.op) in bin_op_map:
-            f_ov = AttributeNode(env, left, bin_op_map[type(ast_node.op)])
-            return FuncCallNode(env, f_ov, [right])
-        raise NotImplementedError("Op %s is not yet supported."
-                                  % type(ast_node.op))
     raise NotImplementedError("%s is not supported as an expression yet."
                               % type(ast_node))
 
