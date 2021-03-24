@@ -8,6 +8,12 @@ class TyphonType:
     def __init__(self):
         self.name = "<undefined type>"
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
 
 class BottomType(TyphonType):
     def __init__(self):
@@ -77,7 +83,7 @@ class RecordType(TyphonType):
 class PolymorphicType(TyphonType):
     def __init__(self, name, func_srcs):
         self.name = name
-        self.func_srcs = set()
+        self.func_srcs = func_srcs
 
     def __eq__(self, other):
         return isinstance(other, PolymorphicType) and other.func_srcs == self.func_srcs

@@ -14,20 +14,27 @@ from ..nodes import ReturnStmtNode, FuncDefNode
 
 
 class PolymorphicFunction:
-    def __init__(self, root_ast_node):
+    def __init__(self, root_env, root_ast_node):
+        self.root_env = root_env
         self.root = root_ast_node
         self.instances = []
 
-    def expand_on_args(self, env, ts, args_types):
+    def match_instance(self, args_types):
         for inst, args in self.instances:
             if args == args_types:
                 return inst
-        nenv = NodeEnv(env.qualname + self.root.name + " > ", env)
-        nenv.bindings["@RET"] = AbstractVariable(TypeVar(nenv.qualname + "@RET"), "@RET")
+        return None
+
+    def expand_on_args(self, ts, args_types):
+        env = self.root_env
+        cinst = self.match_instance(args_types)
+        if cinst is not None:
+            return cinst
+        nenv = NodeEnv(env.qualname + self.root.name + str(args_types) + " > ", env)
+        nenv.bindings["@RET"] = AbstractVariable(None, "@RET")
         for arg, T in zip(self.root.args.args, args_types):
-            nenv.bindings[arg.arg] = AbstractVariable(TypeVar(
-                nenv.qualname + arg.arg, T),
-            arg.arg)
+            argTV = ts.add_var(TypeVar(nenv.qualname + arg.arg, T))
+            nenv.bindings[arg.arg] = AbstractVariable(argTV, arg.arg)
         ninst = typhon_tree(nenv, self.root)
         ninst.typing_all_subs(ts)
         self.instances.append((ninst, args_types))
@@ -51,7 +58,9 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
     if isinstance(ast_node, ast.FunctionDef):
         name = ast_node.name
         if name not in env.bindings:
-            env.bindings[name] = AbstractVariable(None, name, PolymorphicFunction(ast_node))
+            env.bindings[name] = AbstractVariable(None, name, PolymorphicFunction(env, ast_node))
+        else:
+            raise Exception("Function rewritting is not yet supported.")
         return PlaceholderStmtNode(env)
     if isinstance(ast_node, ast.Assign):
         if len(ast_node.targets) > 1:

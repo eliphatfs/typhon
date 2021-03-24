@@ -46,6 +46,8 @@ class RootNodeMixin:
         for c in env.children:
             self.add_env_typevars(c, ts)
         for abs_var in env.bindings.values():
+            if abs_var.TV is not None:
+                continue
             if abs_var.func_binding is not None:
                 abs_var.TV = TypeVar(
                     env.qualname + abs_var.name,
