@@ -5,6 +5,8 @@ Created on Sat Mar 13 21:20:11 2021
 @author: eliphat
 """
 from .intrinsics.py_numerics import py_int
+from .intrinsics.py_bool import py_bool
+from .intrinsics.py_none import py_none
 from . import TypeVar, BaseConstraint
 
 
@@ -17,6 +19,10 @@ class TypeSystem:
     def query_val_type(self, py_val: type):
         if type(py_val) is int:
             return py_int
+        elif py_val is None:
+            return py_none
+        elif type(py_val) is bool:
+            return py_bool
         raise TypeError("Unrecognized type: %s from value %s" % (type(py_val), py_val))
 
     def add_var(self, v: TypeVar):
