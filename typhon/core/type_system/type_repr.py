@@ -75,21 +75,19 @@ class RecordType(TyphonType):
 
 
 class PolymorphicType(TyphonType):
-    def __init__(self, name, subs):
+    def __init__(self, name, func_srcs):
         self.name = name
-        self.subs = subs
+        self.func_srcs = set()
 
     def __eq__(self, other):
-        return isinstance(other, PolymorphicType) and other.subs == self.subs
+        return isinstance(other, PolymorphicType) and other.func_srcs == self.func_srcs
 
     def __or__(self, other):
         if self == other:
             return self
-        elif isinstance(other, FunctionType):
-            if other in self.subs:
-                return other
         elif isinstance(other, PolymorphicType):
-            raise TypeError("Union between polymorphic types are not yet supported. " +
-                            "Called on: %s and %s"
-                            % (self.name, other.name))
+            return PolymorphicType(
+                self.name + " | " + other.name,
+                self.func_srcs | other.func_srcs
+            )
         return NotImplemented

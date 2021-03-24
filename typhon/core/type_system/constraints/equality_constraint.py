@@ -21,7 +21,6 @@ class EqualityConstraint(BaseConstraint):
 
     def fix(self, ts):
         self.dst.T = self.src.T
-        self.dst.func_srcs = set(self.src.func_srcs)
 
     def is_resolved(self):
         return True
