@@ -14,6 +14,11 @@ class TyphonType:
     def __repr__(self):
         return self.name
 
+    def __or__(self, other):
+        if self == other:
+            return self
+        return NotImplemented
+
 
 class BottomType(TyphonType):
     def __init__(self):
@@ -92,8 +97,13 @@ class PolymorphicType(TyphonType):
         if self == other:
             return self
         elif isinstance(other, PolymorphicType):
+            union = self.func_srcs | other.func_srcs
+            if union == self.func_srcs:
+                return self
+            if union == other.func_srcs:
+                return other
             return PolymorphicType(
                 self.name + " | " + other.name,
-                self.func_srcs | other.func_srcs
+                union
             )
         return NotImplemented
