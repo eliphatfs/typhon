@@ -18,13 +18,15 @@ class ExprStmtNode(StmtNode):
 
 
 class AssignStmtNode(ExprStmtNode):
-    def __init__(self, env, expr: ExprNode, target_name: str):
+    def __init__(self, env, expr: ExprNode, target: ExprNode):
         super().__init__(env, expr)
-        self.target = target_name
+        self.target = target
+
+    def children(self):
+        return [self.expr, self.target]
 
     def typing(self, ts):
-        abs_var = self.env.query_name(self.target)
         ts.add_constraint(SubtypeConstraint(
-            abs_var.TV,
+            self.target.value_type_var(),
             self.expr.value_type_var()
         ))

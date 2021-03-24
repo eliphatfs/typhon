@@ -55,12 +55,12 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
         if len(ast_node.targets) > 1:
             raise NotImplementedError("Multiple-target assignment is not yet supported.")
         target = ast_node.targets[0]
-        assert isinstance(target, ast.Name)
-        if target.id not in env.bindings:
+        if isinstance(target, ast.Name) and target.id not in env.bindings:
             env.bindings[target.id] = AbstractVariable(None, target.id)
             # Type Var creation is deferred to before typing nodes and after parsing
         sexpr = typhon_expr(env, ast_node.value)
-        return AssignStmtNode(env, sexpr, target.id)
+        texpr = typhon_expr(env, target)
+        return AssignStmtNode(env, sexpr, texpr)
     raise NotImplementedError("%s is not supported as a statement yet."
                               % type(ast_node))
 
