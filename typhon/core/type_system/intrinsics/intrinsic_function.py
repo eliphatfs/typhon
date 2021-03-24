@@ -8,6 +8,9 @@ from ..type_repr import TyphonType, BottomType
 
 
 class IntrinsicFunction(TyphonType):
+    def __init__(self):
+        self.name = "<intrinsic @%d>" % id(self)
+
     def __call__(self, out_type_var, *arg_type_vars):
         pass
 
