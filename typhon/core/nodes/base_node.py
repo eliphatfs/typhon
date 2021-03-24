@@ -80,10 +80,3 @@ class AbstractVariable:
         self.name = name  # local name
         self.TV = type_var
         self.func_binding = func_binding
-
-
-class PolymorphicFunction:
-    def __init__(self, root_ast_node, qualified_name):
-        self.name = qualified_name
-        self.root = root_ast_node
-        self.instances = []

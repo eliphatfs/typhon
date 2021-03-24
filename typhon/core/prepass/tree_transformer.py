@@ -5,11 +5,32 @@ Created on Mon Mar 15 15:51:36 2021
 @author: eliphat
 """
 import ast
-from typing import Optional
 
-from ..nodes import BaseNode, NodeEnv, AbstractVariable
-from ..nodes import ExprStmtNode, PlaceholderStmtNode, AssignStmtNode
+from ..type_system.type_var import TypeVar
+from ..nodes import NodeEnv, AbstractVariable
+from ..nodes import PlaceholderStmtNode, AssignStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
+from ..nodes import ReturnStmtNode, FuncDefNode
+
+
+class PolymorphicFunction:
+    def __init__(self, root_ast_node):
+        self.root = root_ast_node
+        self.instances = []
+
+    def expand_on_args(self, env, ts, args_types):
+        for inst, args in self.instances:
+            if args == args_types:
+                return inst
+        nenv = NodeEnv(env.qualname + self.root.name + " > ", env)
+        for arg, T in zip(self.root.args.args, args_types):
+            nenv.bindings[arg.arg] = AbstractVariable(TypeVar(
+                nenv.qualname + arg.arg, T),
+            arg.arg)
+        ninst = typhon_tree(nenv, self.root)
+        ninst.typing_all_subs(ts)
+        self.instances.append((ninst, args_types))
+        return ninst
 
 
 def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
@@ -21,7 +42,15 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
     # Section - stmt
     if isinstance(ast_node, ast.Expr):
         sexpr = typhon_expr(env, ast_node.value)
-        return ExprStmtNode(env, sexpr)
+    if isinstance(ast_node, ast.Return):
+        sexpr = typhon_expr(env, ast_node.value)
+        # TODO: support empty return statements
+        return ReturnStmtNode(env, sexpr)
+    if isinstance(ast_node, ast.FunctionDef):
+        name = ast_node.name
+        if name not in env.bindings:
+            env.bindings[name] = AbstractVariable(None, name, PolymorphicFunction(ast_node))
+        return PlaceholderStmtNode(env)
     if isinstance(ast_node, ast.Assign):
         if len(ast_node.targets) > 1:
             raise NotImplementedError("Multiple-target assignment is not yet supported.")
@@ -67,7 +96,8 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
                               % type(ast_node))
 
 
-def typhon_tree(env: NodeEnv, ast_node: ast.AST) -> Optional[BaseNode]:
-    if isinstance(ast_node, ast.Module):
-        return [typhon_stmt(env, s) for s in ast_node.body]
-    raise TypeError("AST root should be Module.")
+def typhon_tree(env: NodeEnv, ast_node: ast.AST) -> FuncDefNode:
+    if isinstance(ast_node, (ast.Module, ast.FunctionDef)):
+        body = [typhon_stmt(env, s) for s in ast_node.body]
+        return FuncDefNode(env, body)
+    raise TypeError("AST root should be Module or FuncDef.")
