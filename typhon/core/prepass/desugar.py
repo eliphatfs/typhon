@@ -27,6 +27,14 @@ unary_op_map = {
     ast.UAdd: "__pos__",
     ast.USub: "__neg__",
 }
+compare_op_map = {
+    ast.Eq: "__eq__",
+    ast.NotEq: "__ne__",
+    ast.Lt: "__lt__",
+    ast.LtE: "__le__",
+    ast.Gt: "__gt__",
+    ast.GtE: "__ge__",
+}
 
 
 class Desugar(ast.NodeTransformer):
@@ -54,6 +62,14 @@ class Desugar(ast.NodeTransformer):
                              attr=unary_op_map[type(node.op)],
                              ctx=ast.Load())
         call = ast.Call(func=func, args=[], keywords=[])
+        return ast.copy_location(call, node)
+
+    def visit_Compare(self, node):
+        assert len(node.ops) == 1
+        func = ast.Attribute(value=self.visit(node.left),
+                             attr=compare_op_map[type(node.ops[0])],
+                             ctx=ast.Load())
+        call = ast.Call(func=func, args=[self.visit(node.comparators[0])], keywords=[])
         return ast.copy_location(call, node)
 
 

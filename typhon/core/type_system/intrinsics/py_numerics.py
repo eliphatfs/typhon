@@ -25,3 +25,10 @@ py_int.add_function_member("__pos__", FunctionType([], py_int))
 py_int.add_function_member("__invert__", FunctionType([], py_int))
 
 py_int.add_function_member("__bool__", FunctionType([], py_bool))
+
+py_int.add_function_member("__lt__", FunctionType([py_int], py_bool))
+py_int.add_function_member("__le__", FunctionType([py_int], py_bool))
+py_int.add_function_member("__eq__", FunctionType([py_int], py_bool))
+py_int.add_function_member("__ne__", FunctionType([py_int], py_bool))
+py_int.add_function_member("__gt__", FunctionType([py_int], py_bool))
+py_int.add_function_member("__ge__", FunctionType([py_int], py_bool))
