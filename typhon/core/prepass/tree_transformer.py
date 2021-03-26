@@ -72,8 +72,6 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
             raise Exception("Function rewritting is not yet supported.")
         return PlaceholderStmtNode(env)
     if isinstance(ast_node, ast.Assign):
-        if len(ast_node.targets) > 1:
-            raise NotImplementedError("Multiple-target assignment is not yet supported.")
         target = ast_node.targets[0]
         if isinstance(target, ast.Name) and target.id not in env.bindings:
             env.bindings[target.id] = AbstractVariable(None, target.id)

@@ -72,6 +72,16 @@ class Desugar(ast.NodeTransformer):
         call = ast.Call(func=func, args=[self.visit(node.comparators[0])], keywords=[])
         return ast.copy_location(call, node)
 
+    def visit_Assign(self, node):
+        self.generic_visit(node)
+        stmts = []
+        for t, s in reversed(list(zip(node.targets, node.targets[1:] + [node.value]))):
+            stmts.append(ast.copy_location(
+                ast.Assign(targets=[t], value=s),
+                node
+            ))
+        return stmts
+
 
 def run_desugar(tree):
     return ast.fix_missing_locations(Desugar().visit(tree))
