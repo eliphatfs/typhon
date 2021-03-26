@@ -30,6 +30,18 @@ def add(a):
 n = identity(3)()
 r = add(n)(5)
 """
+code_func_variable = """
+def add(a, b):
+    return a + b
+
+def sub(a, b):
+    return a - b
+
+F = add
+s = F(1, 2)
+F = sub
+d = F(3, -5)
+"""
 
 
 class UserDefinedFunctionTest(unittest.TestCase):
@@ -56,5 +68,16 @@ class UserDefinedFunctionTest(unittest.TestCase):
         )
         self.assertEqual(
             res.env.query_name("r").TV.T,
+            res.ts.query_val_type(0)
+        )
+
+    def test_function_variable(self):
+        res = typhon.core.type_infer(code_func_variable)
+        self.assertEqual(
+            res.env.query_name("s").TV.T,
+            res.ts.query_val_type(0)
+        )
+        self.assertEqual(
+            res.env.query_name("d").TV.T,
             res.ts.query_val_type(0)
         )
