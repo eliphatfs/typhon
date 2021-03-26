@@ -52,20 +52,16 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
     if isinstance(ast_node, ast.Return):
         sexpr = typhon_expr(env, ast_node.value)
         return ReturnStmtNode(env, sexpr)
-    if isinstance(ast_node, (ast.If, ast.While)):
-        test = typhon_expr(env, ast_node.test)
-        f_bo = AttributeNode(env, test, '__bool__')
-        test_tr = FuncCallNode(env, f_bo, [])
-        if isinstance(ast_node, ast.If):
-            return IfNode(env,
-                          test_tr,
-                          typhon_body(env, ast_node.body),
-                          typhon_body(env, ast_node.orelse))
-        if isinstance(ast_node, ast.While):
-            return WhileNode(env,
-                             test_tr,
-                             typhon_body(env, ast_node.body),
-                             typhon_body(env, ast_node.orelse))
+    if isinstance(ast_node, ast.If):
+        return IfNode(env,
+                      typhon_expr(env, ast_node.test),
+                      typhon_body(env, ast_node.body),
+                      typhon_body(env, ast_node.orelse))
+    if isinstance(ast_node, ast.While):
+        return WhileNode(env,
+                         typhon_expr(env, ast_node.test),
+                         typhon_body(env, ast_node.body),
+                         typhon_body(env, ast_node.orelse))
     if isinstance(ast_node, ast.FunctionDef):
         name = ast_node.name
         if name not in env.bindings:
