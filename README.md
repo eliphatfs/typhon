@@ -3,6 +3,9 @@ Static Type Inference for Python.
 The goal is to infer types without explicit notations as much as possible.
 As systems with polymorphism are generally undecidable, we take approximations.
 
+Currently typhon is only tested with python `3.8`. It should work from `3.6` to `3.8`.
+In the future more versions will be made compatible.
+
 ## Status: Rebuilt, Preliminary
 Supports:
 - Integer arithmetics
