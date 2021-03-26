@@ -50,6 +50,29 @@ class Desugar(ast.NodeTransformer):
             )
         return self.generic_visit(node)
 
+    def visit_BoolOp(self, node):
+        # TODO: Fix semantics
+        # Currently multiple calls are made for non-atomic expr
+        handled = self.visit(node.values[0])
+        if len(node.values) == 1:
+            return handled
+        rest = ast.BoolOp(
+            op=node.op,
+            values=node.values[1:]
+        )
+        if isinstance(node.op, ast.And):
+            return ast.copy_location(ast.IfExp(
+                test=handled,
+                body=self.visit_BoolOp(rest),
+                orelse=handled
+            ), node)
+        elif isinstance(node.op, ast.Or):
+            return ast.copy_location(ast.IfExp(
+                test=handled,
+                body=handled,
+                orelse=self.visit_BoolOp(rest)
+            ), node)
+
     def visit_BinOp(self, node):
         func = ast.Attribute(value=self.visit(node.left),
                              attr=bin_op_map[type(node.op)],
@@ -58,19 +81,36 @@ class Desugar(ast.NodeTransformer):
         return ast.copy_location(call, node)
 
     def visit_UnaryOp(self, node):
-        func = ast.Attribute(value=self.visit(node.operand),
-                             attr=unary_op_map[type(node.op)],
-                             ctx=ast.Load())
-        call = ast.Call(func=func, args=[], keywords=[])
-        return ast.copy_location(call, node)
+        if isinstance(node.op, ast.Not):
+            return ast.copy_location(ast.IfExp(
+                test=self.visit(node.operand),
+                body=ast.Constant(value=False),
+                orelse=ast.Constant(value=True),
+            ), node)
+        else:
+            func = ast.Attribute(value=self.visit(node.operand),
+                                 attr=unary_op_map[type(node.op)],
+                                 ctx=ast.Load())
+            call = ast.Call(func=func, args=[], keywords=[])
+            return ast.copy_location(call, node)
 
     def visit_Compare(self, node):
-        assert len(node.ops) == 1
-        func = ast.Attribute(value=self.visit(node.left),
-                             attr=compare_op_map[type(node.ops[0])],
-                             ctx=ast.Load())
-        call = ast.Call(func=func, args=[self.visit(node.comparators[0])], keywords=[])
-        return ast.copy_location(call, node)
+        if len(node.ops) > 1:
+            return self.visit(ast.copy_location(
+                ast.BoolOp(
+                    op=ast.And(),
+                    values=[
+                        ast.Compare(left=left, ops=[op], comparators=[right])
+                        for left, op, right in zip([node.left] + node.comparators, node.ops, node.comparators)
+                    ]
+                ), node
+            ))
+        else:
+            func = ast.Attribute(value=self.visit(node.left),
+                                 attr=compare_op_map[type(node.ops[0])],
+                                 ctx=ast.Load())
+            call = ast.Call(func=func, args=[self.visit(node.comparators[0])], keywords=[])
+            return ast.copy_location(call, node)
 
     def visit_Assign(self, node):
         self.generic_visit(node)

@@ -10,6 +10,7 @@ from ..type_system.type_var import TypeVar
 from ..nodes import NodeEnv, AbstractVariable
 from ..nodes import PlaceholderStmtNode, AssignStmtNode, ExprStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
+from ..nodes import IfElseExprNode
 from ..nodes import ReturnStmtNode, FuncDefNode
 from ..nodes import IfNode, WhileNode
 
@@ -97,6 +98,12 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
         )
     if isinstance(ast_node, ast.Attribute):
         return AttributeNode(env, typhon_expr(env, ast_node.value), ast_node.attr)
+    if isinstance(ast_node, ast.IfExp):
+        return IfElseExprNode(env,
+            typhon_expr(env, ast_node.test),
+            typhon_expr(env, ast_node.body),
+            typhon_expr(env, ast_node.orelse)
+        )
     raise NotImplementedError("%s is not supported as an expression yet."
                               % type(ast_node))
 

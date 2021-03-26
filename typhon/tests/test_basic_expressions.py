@@ -14,6 +14,15 @@ code_multi_assignment = """
 a = b = c = d = 1
 e = a + b - c + d
 """
+code_conditional = """
+a = 1
+b = 1 or a or 3
+c = True and False and True
+d = not c
+e = not b
+f = d or e
+g = 1 < 2 < a
+"""
 
 
 class BasicExpressionTest(unittest.TestCase):
@@ -32,4 +41,17 @@ class BasicExpressionTest(unittest.TestCase):
             self.assertEqual(
                 res.env.query_name(v).TV.T,
                 res.ts.query_val_type(0)
+            )
+
+    def test_conditional(self):
+        res = typhon.core.type_infer(code_conditional)
+        for v in "ab":
+            self.assertEqual(
+                res.env.query_name(v).TV.T,
+                res.ts.query_val_type(0)
+            )
+        for v in "cdefg":
+            self.assertEqual(
+                res.env.query_name(v).TV.T,
+                res.ts.query_val_type(True)
             )
