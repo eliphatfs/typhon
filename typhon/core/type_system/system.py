@@ -16,7 +16,7 @@ class TypeSystem:
         self.type_constraints = []
         self.program_name = program_name
 
-    def query_val_type(self, py_val: type):
+    def query_val_type(self, py_val):
         if type(py_val) is int:
             return py_int
         elif py_val is None:
