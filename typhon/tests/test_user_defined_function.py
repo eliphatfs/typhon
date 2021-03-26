@@ -42,6 +42,33 @@ s = F(1, 2)
 F = sub
 d = F(3, -5)
 """
+code_scoping = """
+def A():
+    a = 1
+    return a
+
+def B():
+    b = None
+    return b
+
+def AA():
+    a = False
+    return a
+
+def Poly(a):
+    return a
+
+def Glob():
+    return a
+
+b = A()
+b = Poly(b + 1)
+a = B()
+a = Glob()
+a = Poly(B())
+z = Poly(b > 0)
+z = AA()
+"""
 
 
 class UserDefinedFunctionTest(unittest.TestCase):
@@ -80,4 +107,19 @@ class UserDefinedFunctionTest(unittest.TestCase):
         self.assertEqual(
             res.env.query_name("d").TV.T,
             res.ts.query_val_type(0)
+        )
+
+    def test_scoping(self):
+        res = typhon.core.type_infer(code_scoping)
+        self.assertEqual(
+            res.env.query_name("a").TV.T,
+            res.ts.query_val_type(None)
+        )
+        self.assertEqual(
+            res.env.query_name("b").TV.T,
+            res.ts.query_val_type(0)
+        )
+        self.assertEqual(
+            res.env.query_name("z").TV.T,
+            res.ts.query_val_type(True)
         )
