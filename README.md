@@ -8,23 +8,22 @@ In the future more versions will be made compatible.
 
 ## Status: Rebuilt, Preliminary
 Supports:
-- Integer arithmetics
+- Integer arithmetics (full support)
 - Assignment to variables and chained assignment
 - Basic user-defined function with recursion, without variable length arguments or keyword arguments
 - Basic function variables
 - Basic higher order functions
 - If/While statements
+- IfExp (`a if cond else b`) syntax
+- `and`, `or` and `not`
 
 Short-term goals:
-- Supporting `a if cond else b` syntax
-- Supporting `and`, `or` and `not` syntaxes
 - Type checking for implicit `__bool__` calls, and so on (no implications on interference)
 - Basic support for generic classes. More specifically, intrinsics for the `list` type
 - Transpiler to some statically typed language with current constructs,
   probably C++ since transpiler is designed as a co-product only.
   The major part in `typhon` is the type inference engine.
   C++ is complicated, but it is also more versatile since it is complicated.
-- Implement intrinsics for most builtin functions
 
 Also short-term, but lacks a clear design:
 - Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
@@ -38,3 +37,9 @@ Mid-term goals:
 - Exception handling
 - Memory management
 - Marshalling between python and transpiled result
+
+## Miscellaneous Caveats
+- `and` and `or` are translated to `IfExp` in a prepass to keep core of type inference neat.
+  So notice, for example, that in code as `a() or b()`,
+  `a()` will be executed twice if it gives a falsy value
+  because of the translation mechanism.
