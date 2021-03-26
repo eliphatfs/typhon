@@ -63,6 +63,8 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
                          typhon_body(env, ast_node.body),
                          typhon_body(env, ast_node.orelse))
     if isinstance(ast_node, ast.FunctionDef):
+        if ast_node.args.vararg is not None:
+            raise Exception("Function vararg is not yet supported.")
         name = ast_node.name
         if name not in env.bindings:
             env.bindings[name] = AbstractVariable(None, name, PolymorphicFunction(env, ast_node))
