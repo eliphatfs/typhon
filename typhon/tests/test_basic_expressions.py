@@ -11,7 +11,8 @@ e = c & d ^ b
 f = ~e | ~(d ** c)
 """
 code_multi_assignment = """
-a = b = c = d = e = 1
+a = b = c = d = 1
+e = a + b - c + d
 """
 
 
