@@ -13,12 +13,12 @@ Supports:
 - Basic user-defined function with recursion, without variable length arguments or keyword arguments
 - Basic function variables
 - Basic higher order functions
+- Basic `list` (homogeneously typed elements only, currently; some library functions are missing)
 - If/While statements
 - IfExp (`a if cond else b`) syntax
 - `and`, `or` and `not`
 
 Short-term goals:
-- Syntaxes related with `list`
 - Transpiler to some statically typed language with current constructs,
   probably C++ since transpiler is designed as a co-product only.
   The major part in `typhon` is the type inference engine.
