@@ -71,4 +71,5 @@ class FuncCallConstraint(BaseConstraint):
         raise TypeError("%s is not a function" % self.F)
 
     def is_resolved(self):
+        # TODO: Not quite correct?
         return not isinstance(self.R.T, BottomType)
