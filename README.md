@@ -35,9 +35,3 @@ Mid-term goals:
 - Basic support for user-defined classes (maybe callable classes are not considered at the time)
 - Memory management
 - Marshalling between python and transpiled result
-
-## Miscellaneous Caveats
-- `and` and `or` are translated to `IfExp` in a prepass to keep core of type inference neat.
-  So notice, for example, that in code as `a() or b()`,
-  `a()` will be executed twice if it gives a falsy value
-  because of the translation mechanism.
