@@ -18,23 +18,21 @@ Supports:
 - `and`, `or` and `not`
 
 Short-term goals:
-- Type checking for implicit `__bool__` calls, and so on (no implications on interference)
-- Basic support for generic classes. More specifically, intrinsics for the `list` type
+- Syntaxes related with `list`
 - Transpiler to some statically typed language with current constructs,
   probably C++ since transpiler is designed as a co-product only.
   The major part in `typhon` is the type inference engine.
   C++ is complicated, but it is also more versatile since it is complicated.
-
-Also short-term, but lacks a clear design:
-- Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
+- Type checking for implicit `__bool__` calls, and so on (no implications on interference)
 
 Laborious work (possibly generating from dynamically-run test cases?):
 - Implement intrinsics for most builtin functions
 - Import type information for the standard library
 
 Mid-term goals:
-- Basic support for user-defined classes (maybe callable classes are not considered at the time)
 - Exception handling
+- Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
+- Basic support for user-defined classes (maybe callable classes are not considered at the time)
 - Memory management
 - Marshalling between python and transpiled result
 
