@@ -119,14 +119,45 @@ class Desugar(ast.NodeTransformer):
             return ast.copy_location(call, node)
 
     def visit_Assign(self, node):
-        self.generic_visit(node)
-        stmts = []
-        for t, s in reversed(list(zip(node.targets, node.targets[1:] + [node.value]))):
-            stmts.append(ast.copy_location(
-                ast.Assign(targets=[t], value=s),
-                node
-            ))
-        return stmts
+        if len(node.targets) > 1:
+            source_sym = Symbol()
+            return self.visit(ast.copy_location(ast.Expr(LetBinding(
+                symbol=source_sym,
+                bound_expr=node.value,
+                ex_stmts=[
+                    ast.Assign(targets=[t], value=source_sym)
+                    for t in node.targets
+                ],
+                inner=source_sym
+            )), node))
+        target = node.targets[0]
+        if isinstance(target, ast.Subscript):
+            return self.visit(ast.copy_location(ast.Expr(ast.Call(
+                func=ast.Attribute(
+                    value=target.value,
+                    attr="__setitem__",
+                    ctx=ast.Load()
+                ),
+                args=[target.slice, node.value],
+                keywords=[]
+            )), node))
+        return self.generic_visit(node)
+
+    def visit_Index(self, node):
+        return self.generic_visit(node.value)
+
+    def visit_Subscript(self, node):
+        if isinstance(node.ctx, ast.Load):
+            return self.visit(ast.copy_location(ast.Call(
+                func=ast.Attribute(
+                    value=node.value,
+                    attr="__getitem__",
+                    ctx=ast.Load()
+                ),
+                args=[node.slice],
+                keywords=[]
+            ), node))
+        return self.generic_visit(node)
 
     def visit_List(self, node):
         if not isinstance(node.ctx, ast.Load):
