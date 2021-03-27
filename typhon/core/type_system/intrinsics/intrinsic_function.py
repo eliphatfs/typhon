@@ -17,6 +17,7 @@ class IntrinsicFunction(TyphonType):
 
 class WrapperIntrinsic(IntrinsicFunction):
     def __init__(self, type_callable):
+        super().__init__()
         self.type_callable = type_callable
 
     def __call__(self, out_type_var, arg_type_vars):
