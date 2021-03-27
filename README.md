@@ -32,6 +32,7 @@ Laborious work (possibly generating from dynamically-run test cases?):
 Mid-term goals:
 - Exception handling
 - Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
+- Import system
+- Marshalling between python and transpiled result
 - Basic support for user-defined classes (maybe callable classes are not considered at the time)
 - Memory management
-- Marshalling between python and transpiled result
