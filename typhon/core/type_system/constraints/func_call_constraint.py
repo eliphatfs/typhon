@@ -50,6 +50,7 @@ class FuncCallConstraint(BaseConstraint):
             if self.last_intrinsic is not self.F.T:
                 self.last_intrinsic = self.F.T
                 self.F.T(self.R, self.args)
+            return
         if isinstance(self.F.T, PolymorphicType):
             for f_src in self.F.T.func_srcs:
                 inst = f_src.expand_on_args(
