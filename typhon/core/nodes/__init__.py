@@ -15,3 +15,5 @@ from .func_def_node import FuncDefNode
 from .return_node import ReturnStmtNode
 from .if_while_node import IfNode, WhileNode
 from .if_else_exp_node import IfElseExprNode
+from .symbol_node import SymbolNode
+from .let_binding_node import LetBindingExprNode

@@ -45,6 +45,10 @@ class RootNodeMixin:
     def add_env_typevars(self, env, ts):
         for c in env.children:
             self.add_env_typevars(c, ts)
+        for symbol in env.symbols.keys():
+            env.symbols[symbol] = TypeVar(
+                env.qualname + "$sym_%d" % abs(id(symbol))
+            )
         for abs_var in env.bindings.values():
             if abs_var.TV is not None:
                 continue

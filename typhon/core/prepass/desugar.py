@@ -5,6 +5,7 @@ Created on Wed Mar 24 23:58:32 2021
 @author: eliphat
 """
 import ast
+from .ast_extensions import Symbol, LetBinding
 
 
 bin_op_map = {
@@ -51,8 +52,6 @@ class Desugar(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_BoolOp(self, node):
-        # TODO: Fix semantics
-        # Currently multiple calls are made for non-atomic expr
         handled = self.visit(node.values[0])
         if len(node.values) == 1:
             return handled
@@ -60,18 +59,24 @@ class Desugar(ast.NodeTransformer):
             op=node.op,
             values=node.values[1:]
         )
+        sym_handled = Symbol()
+        let_bound = lambda expr: LetBinding(
+            symbol=sym_handled,
+            bound_expr=handled,
+            inner=expr
+        )
         if isinstance(node.op, ast.And):
-            return ast.copy_location(ast.IfExp(
-                test=handled,
+            return ast.copy_location(let_bound(ast.IfExp(
+                test=sym_handled,
                 body=self.visit_BoolOp(rest),
-                orelse=handled
-            ), node)
+                orelse=sym_handled
+            )), node)
         elif isinstance(node.op, ast.Or):
-            return ast.copy_location(ast.IfExp(
-                test=handled,
-                body=handled,
+            return ast.copy_location(let_bound(ast.IfExp(
+                test=sym_handled,
+                body=sym_handled,
                 orelse=self.visit_BoolOp(rest)
-            ), node)
+            )), node)
 
     def visit_BinOp(self, node):
         func = ast.Attribute(value=self.visit(node.left),

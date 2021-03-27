@@ -14,6 +14,8 @@ from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
 from ..nodes import IfElseExprNode
 from ..nodes import ReturnStmtNode, FuncDefNode
 from ..nodes import IfNode, WhileNode
+from ..nodes import SymbolNode, LetBindingExprNode
+from . import ast_extensions
 
 
 class PolymorphicFunction:
@@ -104,6 +106,16 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
             typhon_expr(env, ast_node.test),
             typhon_expr(env, ast_node.body),
             typhon_expr(env, ast_node.orelse)
+        )
+    if isinstance(ast_node, ast_extensions.Symbol):
+        return SymbolNode(env, ast_node)
+    if isinstance(ast_node, ast_extensions.LetBinding):
+        env.symbols[ast_node.symbol] = None
+        return LetBindingExprNode(
+            env,
+            typhon_expr(env, ast_node.symbol),
+            typhon_expr(env, ast_node.bound_expr),
+            typhon_expr(env, ast_node.inner)
         )
     raise NotImplementedError("%s is not supported as an expression yet."
                               % type(ast_node))

@@ -10,7 +10,8 @@ from .type_system.intrinsics import builtin_functions
 class NodeEnv:
     def __init__(self, qualname: str, parent):
         self.qualname = qualname
-        self.bindings = dict()
+        self.bindings = dict()  # Python names
+        self.symbols = dict()  # Let-bound symbol
         self.children = list()
         if parent is not None:
             parent.children.append(self)
@@ -26,3 +27,6 @@ class NodeEnv:
             if intrinsic is not NotImplemented:
                 return intrinsic
         raise NameError("Attempting to load unbound name %s" % name)
+
+    def query_symbol(self, sym):
+        return self.symbols[sym]
