@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ....nodes.base_node import AbstractVariable
+from ....abstract_variable import AbstractVariable
 from ...type_var import TypeVar
 registry = dict()
 

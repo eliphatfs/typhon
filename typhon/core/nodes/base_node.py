@@ -74,10 +74,3 @@ class DeterminedValue:
     def __init__(self, type_var, val):
         self.v = val
         self.TV = type_var
-
-
-class AbstractVariable:
-    def __init__(self, type_var, name, func_binding=None):
-        self.name = name  # local name
-        self.TV = type_var
-        self.func_binding = func_binding

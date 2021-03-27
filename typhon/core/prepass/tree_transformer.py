@@ -7,7 +7,8 @@ Created on Mon Mar 15 15:51:36 2021
 import ast
 
 from ..type_system.type_var import TypeVar
-from ..nodes import NodeEnv, AbstractVariable
+from ..environment import NodeEnv
+from ..abstract_variable import AbstractVariable
 from ..nodes import PlaceholderStmtNode, AssignStmtNode, ExprStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
 from ..nodes import IfElseExprNode

@@ -4,7 +4,7 @@ Created on Mon Mar 15 10:46:02 2021
 
 @author: eliphat
 """
-from ..type_system.intrinsics import builtin_functions
+from .type_system.intrinsics import builtin_functions
 
 
 class NodeEnv:
