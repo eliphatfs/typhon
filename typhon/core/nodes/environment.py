@@ -4,6 +4,7 @@ Created on Mon Mar 15 10:46:02 2021
 
 @author: eliphat
 """
+from ..type_system.intrinsics import builtin_functions
 
 
 class NodeEnv:
@@ -18,7 +19,10 @@ class NodeEnv:
     def query_name(self, name):
         if name in self.bindings:
             return self.bindings[name]
-        if self.parent is not None:
+        elif self.parent is not None:
             return self.parent.query_name(name)
         else:
-            raise NameError("Attempting to load unbound name %s" % name)
+            intrinsic = builtin_functions.registry.get(name, NotImplemented)
+            if intrinsic is not NotImplemented:
+                return intrinsic
+        raise NameError("Attempting to load unbound name %s" % name)

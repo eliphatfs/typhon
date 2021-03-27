@@ -11,12 +11,20 @@ class IntrinsicFunction(TyphonType):
     def __init__(self):
         self.name = "<intrinsic @%d>" % id(self)
 
-    def __call__(self, out_type_var, *arg_type_vars):
+    def __call__(self, out_type_var, arg_type_vars):
         pass
 
 
-class ArrowTypeCollectionIntrinsicFunction(list, IntrinsicFunction):
-    def __call__(self, out_type_var, *arg_type_vars):
+class WrapperIntrinsic(IntrinsicFunction):
+    def __init__(self, type_callable):
+        self.type_callable = type_callable
+
+    def __call__(self, out_type_var, arg_type_vars):
+        out_type_var.T = self.type_callable(*(tv.T for tv in arg_type_vars))
+
+
+class ArrowCollectionIntrinsic(list, IntrinsicFunction):
+    def __call__(self, out_type_var, arg_type_vars):
         for arrow in self:
             if len(arrow.args) != len(arg_type_vars):
                 continue
@@ -31,8 +39,8 @@ class ArrowTypeCollectionIntrinsicFunction(list, IntrinsicFunction):
             # TODO: meaningful error message
 
     def __or__(self, o):
-        if isinstance(o, ArrowTypeCollectionIntrinsicFunction):
-            return ArrowTypeCollectionIntrinsicFunction(
+        if isinstance(o, ArrowCollectionIntrinsic):
+            return ArrowCollectionIntrinsic(
                 [a for a in self if a in o]
             )
         return NotImplemented
