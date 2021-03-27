@@ -31,8 +31,15 @@ class Back(astor.SourceGenerator):
         self.write(
             'let ', node.symbol,
             ' = ', node.bound_expr,
-            ' in ', node.inner
+            ' in '
         )
+        if node.ex_stmts:
+            with self.delimit('[]'):
+                self.body(node.ex_stmts)
+                self.newline()
+                self.write('')
+            self.write(': ')
+        self.write(node.inner)
 
 
 def run_desugar_with_src(src):

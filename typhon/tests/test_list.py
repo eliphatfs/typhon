@@ -8,6 +8,8 @@ a.append(False)
 a.append(True)
 b = list()
 b.append(a)
+c = [1, 2, 3]
+d = [[], []]
 """
 
 
@@ -22,4 +24,12 @@ class ListTest(unittest.TestCase):
         self.assertEqual(
             res.env.query_name("b").TV.T.name,
             "builtins.list[builtins.list[builtins.bool]]"
+        )
+        self.assertEqual(
+            res.env.query_name("c").TV.T.name,
+            "builtins.list[builtins.int]"
+        )
+        self.assertEqual(
+            res.env.query_name("d").TV.T.name,
+            "builtins.list[builtins.list[Bottom]]"
         )

@@ -115,7 +115,8 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
             env,
             typhon_expr(env, ast_node.symbol),
             typhon_expr(env, ast_node.bound_expr),
-            typhon_expr(env, ast_node.inner)
+            typhon_expr(env, ast_node.inner),
+            typhon_body(env, ast_node.ex_stmts)
         )
     raise NotImplementedError("%s is not supported as an expression yet."
                               % type(ast_node))

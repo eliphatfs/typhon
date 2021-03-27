@@ -12,4 +12,4 @@ class Symbol(ast.expr):
 
 
 class LetBinding(ast.expr):
-    _fields = ("symbol", "bound_expr", "inner")
+    _fields = ("symbol", "bound_expr", "ex_stmts", "inner")

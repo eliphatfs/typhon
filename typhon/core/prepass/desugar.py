@@ -63,7 +63,8 @@ class Desugar(ast.NodeTransformer):
         let_bound = lambda expr: LetBinding(
             symbol=sym_handled,
             bound_expr=handled,
-            inner=expr
+            inner=expr,
+            ex_stmts=[]
         )
         if isinstance(node.op, ast.And):
             return ast.copy_location(let_bound(ast.IfExp(
@@ -126,6 +127,30 @@ class Desugar(ast.NodeTransformer):
                 node
             ))
         return stmts
+
+    def visit_List(self, node):
+        if not isinstance(node.ctx, ast.Load):
+            return self.generic_visit(node)
+        list_sym = Symbol()
+        node = self.generic_visit(node)
+        return ast.copy_location(LetBinding(
+            symbol=list_sym,
+            bound_expr=ast.copy_location(
+                ast.parse("list()", mode="eval").body,
+                node
+            ),
+            inner=list_sym,
+            ex_stmts=[
+                ast.Expr(value=ast.Call(
+                    func=ast.Attribute(
+                        value=list_sym, attr="append", ctx=ast.Load()
+                    ),
+                    args=[elt],
+                    keywords=[]
+                ))
+                for elt in node.elts
+            ]
+        ), node)
 
 
 def run_desugar(tree):

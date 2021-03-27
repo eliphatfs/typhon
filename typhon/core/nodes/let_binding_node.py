@@ -10,14 +10,15 @@ from ..type_system import EqualityConstraint
 
 class LetBindingExprNode(ExprNode):
 
-    def __init__(self, env, symbol_node, bound_expr, inner):
+    def __init__(self, env, symbol_node, bound_expr, inner, ex_stmts):
         super().__init__(env)
         self.symbol_node = symbol_node
         self.bound_expr = bound_expr
+        self.ex_stmts = ex_stmts
         self.inner = inner
 
     def children(self):
-        return [self.symbol_node, self.bound_expr, self.inner]
+        return [self.symbol_node, self.bound_expr, self.inner] + self.ex_stmts
 
     def typing(self, ts):
         ts.add_constraint(EqualityConstraint(
