@@ -38,6 +38,17 @@ compare_op_map = {
 }
 
 
+class ContextChange(ast.NodeTransformer):
+    def __init__(self, target_context):
+        self.target_context = target_context
+
+    def visit_Load(self, node):
+        return ast.copy_location(self.target_context(), node)
+
+    def visit_Store(self, node):
+        return ast.copy_location(self.target_context(), node)
+
+
 class Desugar(ast.NodeTransformer):
 
     def visit_Pass(self, node):
@@ -182,6 +193,16 @@ class Desugar(ast.NodeTransformer):
                 for elt in node.elts
             ]
         ), node)
+
+    def visit_AugAssign(self, node):
+        return self.visit(ast.copy_location(ast.Assign(
+            targets=[node.target],
+            value=ast.BinOp(
+                left=ContextChange(ast.Load).visit(node.target),
+                op=node.op,
+                right=node.value
+            ),
+        ), node))
 
 
 def run_desugar(tree):
