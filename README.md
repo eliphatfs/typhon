@@ -23,7 +23,7 @@ Short-term goals:
   probably C++ since transpiler is designed as a co-product only.
   The major part in `typhon` is the type inference engine.
   C++ is complicated, but it is also more versatile since it is complicated.
-- Type checking for implicit `__bool__` calls, and so on (no implications on interference)
+- Type checking for implicit `__bool__` calls, and so on (no implications on inference)
 
 Laborious work (possibly generating from dynamically-run test cases?):
 - Implement intrinsics for most builtin functions
