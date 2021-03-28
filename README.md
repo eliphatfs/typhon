@@ -24,6 +24,7 @@ Short-term goals:
   ~~The major part in `typhon` is the type inference engine.~~
   ~~C++ is complicated, but it is also more versatile since it is complicated.~~
   No perhaps C++ is not quite a good compiler backend.
+  Maybe currently only translate to an lower level, strongly typed, and structured IR first.
 - Type checking for implicit `__bool__` calls, and so on (no implications on inference)
 
 Laborious work (possibly generating from dynamically-run test cases?):
