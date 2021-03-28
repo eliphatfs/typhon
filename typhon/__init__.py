@@ -1,2 +1,3 @@
 # -*- coding: utf-8 -*-
-from . import core
+from . import core, transpiler
+from .core import type_infer
