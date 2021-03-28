@@ -36,3 +36,8 @@ Mid-term goals:
 - Marshalling between python and transpiled result
 - Basic support for user-defined classes (maybe callable classes are not considered at the time)
 - Memory management
+
+## Caveats
+- The `while` statement does not support an `else` clause when transpiling.
+- Augmented assignment (eg. `a += 1`) will be translated into `a = a + 1`, so inplace functions like `__iadd__` are never called.
+- Operators do not fallback at the moment. `NotImplemented` is not supported.
