@@ -19,10 +19,11 @@ Supports:
 - `and`, `or` and `not`
 
 Short-term goals:
-- Transpiler to some statically typed language with current constructs,
-  probably C++ since transpiler is designed as a co-product only.
-  The major part in `typhon` is the type inference engine.
-  C++ is complicated, but it is also more versatile since it is complicated.
+- ~~Transpiler to some statically typed language with current constructs,~~
+  ~~probably C++ since transpiler is designed as a co-product only.~~
+  ~~The major part in `typhon` is the type inference engine.~~
+  ~~C++ is complicated, but it is also more versatile since it is complicated.~~
+  No perhaps C++ is not quite a good compiler backend.
 - Type checking for implicit `__bool__` calls, and so on (no implications on inference)
 
 Laborious work (possibly generating from dynamically-run test cases?):
