@@ -15,6 +15,7 @@ from ..nodes import IfElseExprNode
 from ..nodes import ReturnStmtNode, FuncDefNode
 from ..nodes import IfNode, WhileNode
 from ..nodes import SymbolNode, LetBindingExprNode
+from ..nodes import BreakStmtNode, ContinueStmtNode
 from . import ast_extensions
 
 
@@ -83,6 +84,10 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
         sexpr = typhon_expr(env, ast_node.value)
         texpr = typhon_expr(env, target)
         return AssignStmtNode(env, sexpr, texpr)
+    if isinstance(ast_node, ast.Break):
+        return BreakStmtNode(env)
+    if isinstance(ast_node, ast.Continue):
+        return ContinueStmtNode(env)
     raise NotImplementedError("%s is not supported as a statement yet."
                               % type(ast_node))
 

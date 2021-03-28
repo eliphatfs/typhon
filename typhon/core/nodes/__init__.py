@@ -17,3 +17,4 @@ from .if_while_node import IfNode, WhileNode
 from .if_else_exp_node import IfElseExprNode
 from .symbol_node import SymbolNode
 from .let_binding_node import LetBindingExprNode
+from .loop_jump_node import BreakStmtNode, ContinueStmtNode
