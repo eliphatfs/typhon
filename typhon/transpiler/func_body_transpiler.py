@@ -94,10 +94,12 @@ class FunctionBodyTranspiler:
 
     def func_call_exp(self, node):
         self.transpile(node.func_node)
+        self.write("(")
         for i, arg in enumerate(node.args_nodes):
             if i > 0:
                 self.write(", ")
             self.transpile(arg)
+        self.write(")")
 
     def if_else_exp(self, node):
         self.transpile(node.test)
