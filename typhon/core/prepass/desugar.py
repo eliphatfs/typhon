@@ -204,6 +204,42 @@ class Desugar(ast.NodeTransformer):
             ),
         ), node))
 
+    def wrap_test(self, test):
+        return ast.Call(
+            func=ast.Name(id='bool', ctx=ast.Load()),
+            args=[test], keywords=[]
+        )
+
+    def visit_If(self, node):
+        self.generic_visit(node)
+        return ast.copy_location(ast.If(
+            test=self.wrap_test(node.test),
+            body=node.body,
+            orelse=node.orelse
+        ), node)
+
+    def visit_While(self, node):
+        self.generic_visit(node)
+        return ast.copy_location(ast.While(
+            test=self.wrap_test(node.test),
+            body=node.body,
+            orelse=node.orelse
+        ), node)
+
+    def visit_IfExp(self, node):
+        self.generic_visit(node)
+        return ast.copy_location(ast.IfExp(
+            test=self.wrap_test(node.test),
+            body=node.body,
+            orelse=node.orelse
+        ), node)
+
+    def visit_Assert(self, node):
+        self.generic_visit(node)
+        return ast.copy_location(ast.Assert(
+            test=self.wrap_test(node.test),
+            msg=node.msg
+        ), node)
 
 def run_desugar(tree):
     return ast.fix_missing_locations(Desugar().visit(tree))
