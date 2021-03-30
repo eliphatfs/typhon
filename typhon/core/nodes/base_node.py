@@ -55,7 +55,7 @@ class RootNodeMixin:
             if abs_var.func_binding is not None:
                 abs_var.TV = TypeVar(
                     env.qualname + abs_var.name,
-                    init_type=PolymorphicType(abs_var.name, {abs_var.func_binding})
+                    init_type=PolymorphicType(env.qualname + abs_var.name, {abs_var.func_binding})
                 )
             else:
                 abs_var.TV = TypeVar(
