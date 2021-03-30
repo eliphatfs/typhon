@@ -28,10 +28,10 @@ class FuncCallConstraint(BaseConstraint):
 
     def check_compatible(self, func_type):
         if len(func_type.args) != len(self.args):
-                return TypeError(
-                    "Function %s requires %d args, got %d"
-                    % (self.F, len(func_type.args), len(self.args))
-                )
+            return TypeError(
+                "Function %s requires %d args, got %d"
+                % (self.F, len(func_type.args), len(self.args))
+            )
         for i, (ao, an) in enumerate(zip(func_type.args, self.args)):
             if ao != an.T:
                 return TypeError(
