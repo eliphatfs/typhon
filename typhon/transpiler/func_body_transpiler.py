@@ -7,13 +7,13 @@ Created on Sun Mar 28 10:04:04 2021
 """
 import json
 from ..core import nodes
-from . import sanitize
+from . import sanitize, CommonTranspiler
 
 
-class FunctionBodyTranspiler:
-    def __init__(self, indent=0, indent_str="    "):
+class FunctionBodyTranspiler(CommonTranspiler):
+    def __init__(self, env, indent=0, indent_str="    "):
+        super().__init__(indent, indent_str)
         self.statement_delimit = ";"
-        self.indent = indent
         self.mapper = {
             nodes.AssignStmtNode: self.statement(self.assign_stmt),
             nodes.AttributeNode: self.expr(self.attribute_exp),
@@ -31,26 +31,10 @@ class FunctionBodyTranspiler:
             nodes.SymbolNode: self.expr(self.symbol),
             nodes.WhileNode: self.statement(self.while_stmt),
         }
-        self.indent_str = indent_str
-        self.buffer = []
-        self.need_indent = False
-        self.symbol_use = dict()
-
-    def to_code(self):
-        return ''.join(self.buffer)
+        self.symbol_use = {k: i for i, k in enumerate(env.symbols.keys())}
 
     def transpile(self, node):
         return self.mapper[type(node)](node)
-
-    def write(self, thing):
-        if self.need_indent:
-            self.buffer.append(self.indent * self.indent_str)
-            self.need_indent = False
-        self.buffer.append(thing)
-
-    def newline(self):
-        self.write("\n")
-        self.need_indent = True
 
     def statement(self, visitor):
 
@@ -58,7 +42,7 @@ class FunctionBodyTranspiler:
             visitor(node)
             self.write(self.statement_delimit)
             self.newline()
-        
+
         return _statement
 
     def expr(self, visitor):
@@ -80,13 +64,14 @@ class FunctionBodyTranspiler:
 
     def attribute_exp(self, node):
         self.transpile(node.base_node)
-        self.write(".")
+        self.write("->")
         self.write(node.label)
 
     def constant_exp(self, node):
         if node.c is None:
             self.write("nullptr")
         else:
+            self.write("new ")
             self.write(sanitize(node.value_type_var().T.name))
             self.write("(")
             self.write(json.dumps(node.c))
@@ -94,7 +79,7 @@ class FunctionBodyTranspiler:
 
     def func_call_exp(self, node):
         self.transpile(node.func_node)
-        self.write("(")
+        self.write("->__call__(")
         for i, arg in enumerate(node.args_nodes):
             if i > 0:
                 self.write(", ")
@@ -102,6 +87,7 @@ class FunctionBodyTranspiler:
         self.write(")")
 
     def if_else_exp(self, node):
+        self.write("*")
         self.transpile(node.test)
         self.write(" ? ")
         self.transpile(node.yes)
@@ -118,8 +104,9 @@ class FunctionBodyTranspiler:
         self.write("}")
 
     def if_stmt(self, node):
-        self.write("if ")
+        self.write("if (*")
         self.transpile(node.test)
+        self.write(")")
         self.block(node.body)
         if node.orelse:
             self.newline()
@@ -127,8 +114,9 @@ class FunctionBodyTranspiler:
             self.block(node.orelse)
 
     def while_stmt(self, node):
-        self.write("while ")
+        self.write("while (*")
         self.transpile(node.test)
+        self.write(")")
         self.block(node.body)
 
     def let_binding(self, node):
@@ -148,6 +136,13 @@ class FunctionBodyTranspiler:
         self.newline()
 
     def load_name(self, node):
+        level = node.env.query_name_level(node.local_name)
+        prepend = ""
+        if level > 0:
+            prepend = level * "__parent_env__->"
+        elif level < 0:
+            prepend = "::"
+        self.write(prepend)
         self.write(node.local_name)
 
     def break_stmt(self, node):
