@@ -47,3 +47,7 @@ class HIRILoadArgument(InstructionWithIntArg):
 
 class HIRIStoreArgument(InstructionWithIntArg):
     KID = "SA"
+
+
+class HIRIReturn(HIRInstruction):
+    KID = "FR"
