@@ -27,4 +27,4 @@ class CommonTranspiler(object):
         self.need_indent = True
 
 
-from . import func_body_transpiler, func_to_class
+from . import func_body_transpiler, func_to_class, hir
