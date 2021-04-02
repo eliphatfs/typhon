@@ -27,4 +27,5 @@ class HIR:
                 ser[id(obj)] = {
                     k: self.ser_non_top(v) for k, v in obj.__dict__.items()
                 }
+                ser[id(obj)]["OBJ_KID"] = obj.OBJ_KID
         return ser
