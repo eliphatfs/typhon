@@ -9,8 +9,9 @@ from .type_system.intrinsics import builtin_functions
 
 
 class NodeEnv:
-    def __init__(self, qualname: str, parent):
+    def __init__(self, qualname: str, parent, generator=None):
         self.qualname = qualname
+        self.generator = generator
         self.bindings = dict()  # Python names
         self.symbols = collections.OrderedDict()  # Let-bound symbol
         self.children = list()
