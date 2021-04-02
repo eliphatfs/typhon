@@ -17,27 +17,25 @@ Supports:
 - If/While statements
 - IfExp (`a if cond else b`) syntax
 - `and`, `or` and `not`
+- Transpiling a really, really small syntax subset into a High-level IR
 
 Short-term goals:
-- ~~Transpiler to some statically typed language with current constructs,~~
-  ~~probably C++ since transpiler is designed as a co-product only.~~
-  ~~The major part in `typhon` is the type inference engine.~~
-  ~~C++ is complicated, but it is also more versatile since it is complicated.~~
-  No perhaps C++ is not quite a good compiler backend.
-  Maybe currently only translate to an lower level, strongly typed, and structured IR first.
-- Type checking for implicit `__bool__` calls, and so on (no implications on inference)
+- Support more constructs for transpiler
+- Implement backend for IR
+- Exception handling
+- Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
 
 Laborious work (possibly generating from dynamically-run test cases?):
 - Implement intrinsics for most builtin functions
 - Import type information for the standard library
 
 Mid-term goals:
-- Exception handling
-- Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
 - Import system
 - Marshalling between python and transpiled result
+- Allow `Any` at some stage for integration
+- Tiered optimizing on HIR
 - Basic support for user-defined classes (maybe callable classes are not considered at the time)
-- Memory management
+- More rigorous type checking
 
 ## Caveats
 - The `while` statement does not support an `else` clause when transpiling.
