@@ -36,7 +36,7 @@ class PolymorphicFunction:
         cinst = self.match_instance(args_types)
         if cinst is not None:
             return cinst
-        nenv = NodeEnv(env.qualname + self.root.name + str(args_types) + " > ", env, self)
+        nenv = NodeEnv(env.qualname + self.root.name + str(args_types) + " > ", env, self.root)
         nenv.bindings["@RET"] = AbstractVariable(None, "@RET")
         for arg, T in zip(self.root.args.args, args_types):
             argTV = ts.add_var(TypeVar(nenv.qualname + arg.arg, T))
