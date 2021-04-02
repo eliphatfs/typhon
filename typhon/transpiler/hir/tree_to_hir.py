@@ -6,9 +6,29 @@ class TreeToHIR:
     def __init__(self):
         self.objects = []
         self.mapper = {
-            nodes.AssignStmtNode: self.assign_stmt
+            nodes.AssignStmtNode: self.assign_stmt,
+            nodes.ExprStmtNode: self.expr_stmt,
+            nodes.ConstantNode: self.constant_exp,
+            nodes.FuncCallNode: self.func_call_exp,
+            nodes.IfNode: self.if_stmt,
+            nodes.PlaceholderStmtNode: lambda: []
         }
-        self.global_env_klass = klass.HIRClass("Typhon.Global")
+        self.global_env_klass = klass.HIRClass("__global__")
+        bint = klass.HIRClass("builtins.int")
+        bint.funcs.append(klass.HIRFunction("__le__", bint, bint, [bint], ))
+        bint.funcs.append(klass.HIRFunction("__add__"))
+        bint.funcs.append(klass.HIRFunction("__sub__"))
+        bint.funcs.append(klass.HIRFunction("__init__"))
+        self.klasses = {
+            "builtins.int": bint,
+            "builtins.bool": bint
+        }
+
+    def block_transpile(self, stmts) -> instructions.HIRCodeBlock:
+        block = instructions.HIRCodeBlock();
+        for stmt in stmts:
+            block.extend(self.transpile(stmt))
+        return block
 
     def transpile(self, node) -> list:
         return self.mapper[type(node)](node)
@@ -55,3 +75,35 @@ class TreeToHIR:
     def expr_stmt(self, node: nodes.ExprStmtNode):
         expr_ir = self.transpile(node.expr)
         expr_ir.append(instructions.HIRIPop())
+        return expr_ir
+
+    def constant_exp(self, node: nodes.ConstantNode):
+        klass = self.klasses[node.value_type_var().T.name]
+        return [
+            instructions.HIRINewObject(klass),
+            instructions.HIRIPushInt32(int(node.c)),
+            instructions.HIRICallMember(klass.find_sub("__init__"))
+        ]
+
+    def func_call_exp(self, node: nodes.FuncCallNode):
+        if isinstance(node.func_node, nodes.AttributeNode):
+            base_ir = self.transpile(node.func_node.base_node)
+            base_klass = self.klasses[node.func_node.base_node.value_type_var().T.name]
+            for arg in node.args_nodes:
+                base_ir.extend(self.transpile(arg))
+            base_ir.append(instructions.HIRICallMember(
+                base_klass.find_sub(node.func_node.label)
+            ))
+            return base_ir
+        if isinstance(node.func_node, nodes.LoadNode):
+            if node.func_node.local_name == "bool":
+                return []
+        raise NotImplementedError("Non-member function calls are not implemented yet.")
+
+    def if_stmt(self, node: nodes.IfNode):
+        test = self.transpile(node.test)
+        test.append(instructions.HIRIIf(
+            self.block_transpile(node.body),
+            self.block_transpile(node.orelse)
+        ))
+        return test

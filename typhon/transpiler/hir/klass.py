@@ -25,3 +25,12 @@ class HIRClass:
         self.name = name
         self.funcs = list()
         self.fields = list()
+
+    def find_sub(self, name):
+        for f in self.funcs:
+            if f.name == name:
+                return f
+        for f in self.fields:
+            if f.name == name:
+                return f
+        raise ValueError("find_sub failed on %s for %s" % (self.name, name))

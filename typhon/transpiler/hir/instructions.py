@@ -59,3 +59,17 @@ class HIRIReturn(HIRInstruction):
 
 class HIRIPop(HIRInstruction):
     KID = "SP"
+
+
+class HIRINewObject(HIRInstruction):
+    KID = "NO"
+
+    def __init__(self, o_class):
+        self.o_class = o_class
+
+
+class HIRIPushInt32(HIRInstruction):
+    KID = "I4"
+
+    def __init__(self, val):
+        self.val = val
