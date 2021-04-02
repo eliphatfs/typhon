@@ -9,12 +9,13 @@ class HIRVariable:
 class HIRFunction:
     OBJ_KID = "fn"
 
-    def __init__(self, name, parent_class, return_class, arg_classes, local_classes):
+    def __init__(self, name, parent_class, return_class, arg_classes, local_classes, body_block):
         self.name = name
         self.parent_class = parent_class
         self.return_class = return_class
         self.arg_classes = arg_classes
         self.local_classes = local_classes
+        self.body_block = body_block
 
 
 class HIRClass:

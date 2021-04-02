@@ -6,6 +6,10 @@ class HIRCodeBlock(list):
     OBJ_KID = "cb"
 
 
+class HIRDummyCodeBlock(HIRCodeBlock):
+    pass
+
+
 class HIRICallMember(HIRInstruction):
     KID = "CM"
 
@@ -51,3 +55,7 @@ class HIRIStoreArgument(InstructionWithIntArg):
 
 class HIRIReturn(HIRInstruction):
     KID = "FR"
+
+
+class HIRIPop(HIRInstruction):
+    KID = "SP"
