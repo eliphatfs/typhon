@@ -141,7 +141,7 @@ class TreeToHIR:
             return base_ir
         if isinstance(node.func_node, nodes.LoadNode):
             if node.func_node.local_name == "bool":
-                return []
+                return self.transpile(node.args_nodes[0])
             base_ir = [instructions.HIRILoadArgument(0)]
             for arg in node.args_nodes:
                 base_ir.extend(self.transpile(arg))
