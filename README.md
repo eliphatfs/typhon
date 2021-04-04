@@ -21,7 +21,6 @@ Supports:
 
 Short-term goals:
 - Support more constructs for transpiler
-- Implement backend for IR
 - Exception handling
 - Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
 
