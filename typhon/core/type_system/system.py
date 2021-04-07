@@ -27,6 +27,7 @@ class TypeSystem:
 
     def add_var(self, v: TypeVar):
         if isinstance(v, TypeVar):
+            v.parent_system = self
             self.type_vars.append(v)
             return v
         raise TypeError("add_var called with wrong type: " + str(type(v)))

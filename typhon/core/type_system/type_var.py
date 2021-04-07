@@ -10,6 +10,7 @@ class TypeVar:
     def __init__(self, name, init_type=None):
         self.name = name  # name for debugging and error reporting
         self.T = init_type or BottomType()
+        self.parent_system = None
 
     def __str__(self):
         return self.name
