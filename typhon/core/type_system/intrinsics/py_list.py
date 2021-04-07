@@ -59,6 +59,6 @@ class PyList(RecordType):
         return isinstance(other, PyList) and other.U == self.U
 
     def __or__(self, other):
-        if isinstance(other, PyList):
-            return PyList(self.U | other.U)
+        if self == other:
+            return self
         return NotImplemented
