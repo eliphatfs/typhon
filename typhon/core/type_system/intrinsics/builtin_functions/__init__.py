@@ -10,4 +10,4 @@ def add_intrinsic(name, intrinsic):
         name
     )
 
-from . import type_constructors
+from . import type_constructors, generic
