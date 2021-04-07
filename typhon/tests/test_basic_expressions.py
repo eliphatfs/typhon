@@ -23,6 +23,11 @@ e = not b
 f = d or e
 g = 1 < 2 < a
 """
+code_raise = """
+a = 1
+exc = Exception()
+raise exc
+"""
 
 
 class BasicExpressionTest(unittest.TestCase):
@@ -55,3 +60,14 @@ class BasicExpressionTest(unittest.TestCase):
                 res.env.query_name(v).TV.T,
                 res.ts.query_val_type(True)
             )
+
+    def test_raise(self):
+        res = typhon.core.type_infer(code_raise)
+        self.assertEqual(
+            res.env.query_name("a").TV.T,
+            res.ts.query_val_type(0)
+        )
+        self.assertEqual(
+            res.env.query_name("exc").TV.T.name,
+            "builtins.Exception"
+        )

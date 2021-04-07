@@ -8,10 +8,12 @@ from . import add_intrinsic
 from .special_method_proxy import SpecialMethodProxy
 from ..intrinsic_function import WrapperIntrinsic, IntrinsicFunction
 from ..py_list import PyList
+from ..py_exc import py_exc
 from ..py_bool import py_bool
 
 
 add_intrinsic("list", WrapperIntrinsic(lambda: PyList()))
+add_intrinsic("Exception", WrapperIntrinsic(lambda *_: py_exc))
 
 
 class BoolIntrinsic(IntrinsicFunction):

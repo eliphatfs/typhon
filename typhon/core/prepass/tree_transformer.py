@@ -13,7 +13,7 @@ from ..nodes import PlaceholderStmtNode, AssignStmtNode, ExprStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
 from ..nodes import IfElseExprNode
 from ..nodes import ReturnStmtNode, FuncDefNode
-from ..nodes import IfNode, WhileNode
+from ..nodes import IfNode, WhileNode, RaiseNode
 from ..nodes import SymbolNode, LetBindingExprNode
 from ..nodes import BreakStmtNode, ContinueStmtNode
 from . import ast_extensions
@@ -67,6 +67,9 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
                          typhon_expr(env, ast_node.test),
                          typhon_body(env, ast_node.body),
                          typhon_body(env, ast_node.orelse))
+    if isinstance(ast_node, ast.Raise):
+        # TODO: cause and re-raise cases of the raise statement
+        return RaiseNode(env, typhon_expr(env, ast_node.exc))
     if isinstance(ast_node, ast.FunctionDef):
         if ast_node.args.vararg is not None:
             raise Exception("Function vararg is not yet supported.")
