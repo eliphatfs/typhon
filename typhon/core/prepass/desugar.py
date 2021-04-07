@@ -244,7 +244,8 @@ class Desugar(ast.NodeTransformer):
     def visit_Raise(self, node):
         if isinstance(node.exc, ast.Name):
             import builtins
-            if isinstance(getattr(builtins, node.exc.id), BaseException):
+            exc_cls = getattr(builtins, node.exc.id)
+            if isinstance(exc_cls, type) and issubclass(exc_cls, BaseException):
                 return self.visit(ast.copy_location(
                     ast.Raise(
                         exc=ast.Call(func=node.exc, args=[], keywords=[]),
@@ -252,6 +253,15 @@ class Desugar(ast.NodeTransformer):
                     ),
                     node
                 ))
+        return self.generic_visit(node)
+
+    def visit_ExceptHandler(self, node):
+        if node.type is None:
+            return ast.copy_location(ast.ExceptHandler(
+                type=ast.Name(id='BaseException', ctx=ast.Load()),
+                name=node.name,
+                body=node.body
+            ), node)
         return self.generic_visit(node)
 
 def run_desugar(tree):
