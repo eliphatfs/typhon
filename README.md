@@ -20,9 +20,9 @@ Supports:
 - Transpiling a really, really small syntax subset into a High-level IR
 
 Short-term goals:
-- Support more constructs for transpiler
 - Exception handling
 - Iterators and `for` loop. Python is strange in that it uses `raise StopIteration` to indicate end of sequence.
+- Support more constructs for transpiler
 
 Laborious work (possibly generating from dynamically-run test cases?):
 - Implement intrinsics for most builtin functions
@@ -34,7 +34,7 @@ Mid-term goals:
 - Allow `Any` at some stage for integration
 - Tiered optimizing on HIR
 - Basic support for user-defined classes (maybe callable classes are not considered at the time)
-- More rigorous type checking
+- More rigorous type checking (for typing rules that do not affect inference)
 
 ## Caveats
 - Augmented assignment (eg. `a += 1`) will be translated into `a = a + 1`, so inplace functions like `__iadd__` are never called.
