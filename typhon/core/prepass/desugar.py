@@ -241,5 +241,18 @@ class Desugar(ast.NodeTransformer):
             msg=node.msg
         ), node)
 
+    def visit_Raise(self, node):
+        if isinstance(node.exc, ast.Name):
+            import builtins
+            if isinstance(getattr(builtins, node.exc.id), BaseException):
+                return self.visit(ast.copy_location(
+                    ast.Raise(
+                        exc=ast.Call(func=node.exc, args=[], keywords=[]),
+                        cause=node.cause
+                    ),
+                    node
+                ))
+        return self.generic_visit(node)
+
 def run_desugar(tree):
     return ast.fix_missing_locations(Desugar().visit(tree))
