@@ -244,7 +244,7 @@ class Desugar(ast.NodeTransformer):
     def visit_Raise(self, node):
         if isinstance(node.exc, ast.Name):
             import builtins
-            exc_cls = getattr(builtins, node.exc.id)
+            exc_cls = getattr(builtins, node.exc.id, None)
             if isinstance(exc_cls, type) and issubclass(exc_cls, BaseException):
                 return self.visit(ast.copy_location(
                     ast.Raise(
