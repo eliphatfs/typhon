@@ -264,5 +264,44 @@ class Desugar(ast.NodeTransformer):
             ), node)
         return self.generic_visit(node)
 
+    def visit_For(self, node):
+        iter_sym = Symbol()
+        return self.visit(ast.copy_location(ast.Expr(
+            value=LetBinding(
+                symbol=iter_sym,
+                inner=iter_sym,
+                bound_expr=ast.Call(
+                    func=ast.Name(id="iter", ctx=ast.Load()),
+                    args=[node.iter],
+                    keywords=[]
+                ),
+                ex_stmts=[
+                    ast.While(
+                        test=ast.Constant(value=True),
+                        body=[ast.Try(
+                            body=[ast.Assign(
+                                targets=[node.target],
+                                value=ast.Call(
+                                    func=ast.Name(id="next", ctx=ast.Load()),
+                                    args=[iter_sym],
+                                    keywords=[]
+                                )
+                            )],
+                            handlers=[ast.ExceptHandler(
+                                type=ast.Name(id="StopIteration", ctx=ast.Load()),
+                                name=None,
+                                body=[
+                                    ast.Break()
+                                ]
+                            )],
+                            orelse=[],
+                            finalbody=[]
+                        )] + node.body,
+                        orelse=node.orelse
+                    )
+                ]
+            )
+        ), node))
+
 def run_desugar(tree):
     return ast.fix_missing_locations(Desugar().visit(tree))
