@@ -31,6 +31,9 @@ try:
 except Exception as exc_caught:
     pass
 """
+code_assign_expr = """
+a = (b := 3)
+"""
 
 
 class BasicExpressionTest(unittest.TestCase):
@@ -77,4 +80,15 @@ class BasicExpressionTest(unittest.TestCase):
         self.assertEqual(
             res.env.query_name("exc_caught").TV.T.name,
             "builtins.Exception"
+        )
+
+    def test_assign_expr(self):
+        res = typhon.core.type_infer(code_assign_expr)
+        self.assertEqual(
+            res.env.query_name("a").TV.T,
+            res.ts.query_val_type(0)
+        )
+        self.assertEqual(
+            res.env.query_name("b").TV.T,
+            res.ts.query_val_type(0)
         )

@@ -303,5 +303,17 @@ class Desugar(ast.NodeTransformer):
             )
         ), node))
 
+    def visit_NamedExpr(self, node):
+        val_sym = Symbol()
+        return ast.copy_location(LetBinding(
+            symbol=val_sym,
+            inner=val_sym,
+            bound_expr=self.visit(node.value),
+            ex_stmts=[self.visit(ast.Assign(
+                targets=[node.target],
+                value=val_sym
+            ))]
+        ), node)
+
 def run_desugar(tree):
     return ast.fix_missing_locations(Desugar().visit(tree))
