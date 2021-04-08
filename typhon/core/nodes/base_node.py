@@ -49,6 +49,7 @@ class RootNodeMixin:
             env.symbols[symbol] = TypeVar(
                 env.qualname + "$sym_%d" % abs(id(symbol))
             )
+            ts.add_var(env.symbols[symbol])
         for abs_var in env.bindings.values():
             if abs_var.TV is not None:
                 continue
