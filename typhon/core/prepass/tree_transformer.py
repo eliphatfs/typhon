@@ -13,7 +13,8 @@ from ..nodes import PlaceholderStmtNode, AssignStmtNode, ExprStmtNode
 from ..nodes import FuncCallNode, AttributeNode, ConstantNode, LoadNode
 from ..nodes import IfElseExprNode
 from ..nodes import ReturnStmtNode, FuncDefNode
-from ..nodes import IfNode, WhileNode, RaiseNode
+from ..nodes import IfNode, WhileNode, RaiseStmtNode
+from ..nodes import TryExceptNode, ExceptHandlerNode
 from ..nodes import SymbolNode, LetBindingExprNode
 from ..nodes import BreakStmtNode, ContinueStmtNode
 from . import ast_extensions
@@ -69,7 +70,7 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
                          typhon_body(env, ast_node.orelse))
     if isinstance(ast_node, ast.Raise):
         # TODO: cause and re-raise cases of the raise statement
-        return RaiseNode(env, typhon_expr(env, ast_node.exc))
+        return RaiseStmtNode(env, typhon_expr(env, ast_node.exc))
     if isinstance(ast_node, ast.FunctionDef):
         if ast_node.args.vararg is not None:
             raise Exception("Function vararg is not yet supported.")
@@ -91,6 +92,15 @@ def typhon_stmt(env: NodeEnv, ast_node: ast.stmt):
         return BreakStmtNode(env)
     if isinstance(ast_node, ast.Continue):
         return ContinueStmtNode(env)
+    if isinstance(ast_node, ast.Try):
+        if len(ast_node.orelse) > 0:
+            raise NotImplementedError("try ... else ... is not supported yet")
+        return TryExceptNode(
+            env,
+            typhon_body(env, ast_node.body),
+            typhon_except_handlers(env, ast_node.handlers),
+            typhon_body(env, ast_node.finalbody)
+        )
     raise NotImplementedError("%s is not supported as a statement yet."
                               % type(ast_node))
 
@@ -132,6 +142,23 @@ def typhon_expr(env: NodeEnv, ast_node: ast.expr):
 
 def typhon_body(env: NodeEnv, stmts):
     return [typhon_stmt(env, s) for s in stmts]
+
+
+def typhon_except_handler(env: NodeEnv, handler):
+    if not isinstance(handler, ast.ExceptHandler):
+        raise TypeError("`except` clause AST should be of type ExceptHandler")
+    if handler.name is not None and handler.name not in env.bindings:
+        env.bindings[handler.name] = AbstractVariable(None, handler.name)
+    return ExceptHandlerNode(
+        env,
+        typhon_expr(env, handler.type),
+        handler.name and LoadNode(env, handler.name),
+        typhon_body(env, handler.body)
+    )
+
+
+def typhon_except_handlers(env: NodeEnv, handlers):
+    return [typhon_except_handler(env, handler) for handler in handlers]
 
 
 def typhon_tree(env: NodeEnv, ast_node: ast.AST) -> FuncDefNode:

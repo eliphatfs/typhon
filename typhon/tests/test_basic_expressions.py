@@ -26,7 +26,10 @@ g = 1 < 2 < a
 code_raise = """
 a = 1
 exc = Exception()
-raise exc
+try:
+    raise exc
+except Exception as exc_caught:
+    pass
 """
 
 
@@ -69,5 +72,9 @@ class BasicExpressionTest(unittest.TestCase):
         )
         self.assertEqual(
             res.env.query_name("exc").TV.T.name,
+            "builtins.Exception"
+        )
+        self.assertEqual(
+            res.env.query_name("exc_caught").TV.T.name,
             "builtins.Exception"
         )
