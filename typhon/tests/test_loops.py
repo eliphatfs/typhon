@@ -19,6 +19,11 @@ while True:
     else:
         continue
 """
+code_for_loop = """
+y = 0
+for x in [1, 2, 3]:
+    y += x
+"""
 
 
 class LoopsTest(unittest.TestCase):
@@ -34,6 +39,14 @@ class LoopsTest(unittest.TestCase):
     def test_break_continue(self):
         res = typhon.core.type_infer(code_break_continue)
         for v in "i":
+            self.assertEqual(
+                res.env.query_name(v).TV.T,
+                res.ts.query_val_type(0)
+            )
+
+    def test_for_loop(self):
+        res = typhon.core.type_infer(code_for_loop)
+        for v in "xy":
             self.assertEqual(
                 res.env.query_name(v).TV.T,
                 res.ts.query_val_type(0)
