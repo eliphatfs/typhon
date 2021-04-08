@@ -6,7 +6,7 @@ Created on Mon Mar 15 16:52:48 2021
 """
 import ast
 import collections
-from . import nodes, prepass, type_system, environment, abstract_variable
+from . import nodes, prepass, postpass, type_system, environment, abstract_variable
 
 
 InferenceResult = collections.namedtuple(
