@@ -9,3 +9,4 @@ from ..type_repr import RecordType
 
 py_base_exc = RecordType("builtins.BaseException", {})
 py_exc = RecordType("builtins.Exception", {})
+py_stop_iter = RecordType("builtins.StopIteration", {})
