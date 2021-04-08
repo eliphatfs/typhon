@@ -51,7 +51,7 @@ class ContextChange(ast.NodeTransformer):
 
 class Desugar(ast.NodeTransformer):
 
-    def visit_Pass(self, node):
+    def visit_Pass(self, _):
         return None
 
     def visit_Return(self, node):
