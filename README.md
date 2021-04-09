@@ -23,6 +23,7 @@ Supports:
 Short-term goals:
 - Support more constructs for transpiler
 - Import system
+- Full intrinsics for simple builtin types: `int`, `float`, `str`
 
 Laborious work (possibly generating from dynamically-run test cases?):
 - Implement intrinsics for most builtin functions
