@@ -31,6 +31,7 @@ Mid-term goals:
 - Support tuples and inhomogeneously typed always-finite lists
 - Support extended slicing
 - Tiered optimizing on HIR
+- Better intrinsic generation (current is somehow incomplete)
 - Marshalling between python and transpiled result
 - Allow `Any` at some stage for integration
 - Basic support for user-defined classes (maybe callable classes are not considered at the time)
