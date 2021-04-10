@@ -8,7 +8,7 @@ In the future more versions will be made compatible.
 
 ## Status: Rebuilt, Preliminary
 Supports:
-- Integer arithmetics (full support)
+- Most stuff with `int`, `float`, `complex` and `str`
 - Assignment to variables and chained assignment
 - Basic user-defined function with recursion, without variable length arguments or keyword arguments
 - Basic function variables
@@ -23,10 +23,8 @@ Supports:
 Short-term goals:
 - Support more constructs for transpiler
 - Import system
-- Full intrinsics for simple builtin types: `int`, `float`, `str`
 
 Laborious work (possibly generating from dynamically-run test cases?):
-- Implement intrinsics for most builtin functions
 - Import type information for the standard library
 
 Mid-term goals:
