@@ -23,6 +23,12 @@ class TyphonType:
     def add_nomial_parent(self, parent_type):
         self.nomial_parents.append(parent_type)
 
+    def is_nomial_subtype_of(self, other):
+        return any(
+            x == other or x.is_nomial_subtype_of(other)
+            for x in self.nomial_parents
+        )
+
 
 class BottomType(TyphonType):
     def __init__(self):
