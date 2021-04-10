@@ -7,7 +7,6 @@ Created on Sat Mar  6 19:35:15 2021
 class TyphonType:
     def __init__(self):
         self.name = "<undefined type>"
-        self.nomial_parents = []
 
     def __str__(self):
         return self.name
@@ -19,15 +18,6 @@ class TyphonType:
         if self == other:
             return self
         return NotImplemented
-
-    def add_nomial_parent(self, parent_type):
-        self.nomial_parents.append(parent_type)
-
-    def is_nomial_subtype_of(self, other):
-        return any(
-            x == other or x.is_nomial_subtype_of(other)
-            for x in self.nomial_parents
-        )
 
 
 class BottomType(TyphonType):
@@ -74,6 +64,7 @@ class RecordType(TyphonType):
     def __init__(self, qualified_name, member_dict):
         self.members = member_dict
         self.name = qualified_name
+        self.nomial_parents = []
         # Every record type should be decided by its qualified name
         # Is this true?
 
@@ -93,6 +84,15 @@ class RecordType(TyphonType):
                             "Called on: %s and %s"
                             % (self.name, other.name))
         return NotImplemented
+
+    def add_nomial_parent(self, parent_type):
+        self.nomial_parents.append(parent_type)
+
+    def is_nomial_subtype_of(self, other):
+        return any(
+            x == other or x.is_nomial_subtype_of(other)
+            for x in self.nomial_parents
+        )
 
 
 class PolymorphicType(TyphonType):
