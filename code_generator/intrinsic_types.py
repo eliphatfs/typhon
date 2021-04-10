@@ -4,6 +4,7 @@ A kind of fuzzing, maybe
 """
 import builtins
 import sys
+import operator
 import functools
 import tqdm
 import typhon.core.type_system.type_repr as type_repr
@@ -74,7 +75,8 @@ skip_attrs = {
     "__aiter__",
     "__anext__",
     "__aenter__",
-    "__aexit__"
+    "__aexit__",
+    "format",
 }
 
 
@@ -94,7 +96,7 @@ for k, v in builtins.__dict__.items():
             if sup in types:
                 types[v].add_nomial_parent(types[sup])
 roots = {
-    3, 'utf-8', 'ignore'
+    (complex, 1 + 1j)
 }
 
 
@@ -106,7 +108,7 @@ def explore(callee, depth=3, add_to_roots=False):
         except Exception:
             return []
         if add_to_roots:
-            roots.add(result)
+            roots.add((type(result), result))
         if type(result) in types:
             return [type_repr.FunctionType((), types[type(result)])]
         else:
@@ -115,34 +117,38 @@ def explore(callee, depth=3, add_to_roots=False):
         callee(*([1] * depth))
     except TypeError as exc:
         feature = str(exc)
-        if ('(%d given)' % depth) in feature or ('got %d' % depth) in feature:
-            # print("No such depth", callee, depth)
-            return explore(callee, depth - 1, add_to_roots)
+        for d in (depth, depth + 1):
+            if ('(%d given)' % d) in feature or ('got %d' % d) in feature:
+                # print("No such depth", callee, depth)
+                return explore(callee, depth - 1, add_to_roots)
     except Exception:
         pass
     overloads = []
     reg = dict()
-    for obj in list(roots):
+    token = object()
+    for _, obj in list(roots) + [(None, token)]:
         if type(obj) not in types:
             print("Warning: %s not in recognized types" % obj, file=sys.stderr)
             continue
         T = types[type(obj)]
-        partial = functools.partial(callee, obj)
+        if token is not obj:
+            partial = functools.partial(callee, obj)
+        else:
+            partial = callee
         for overload in explore(partial, depth - 1, add_to_roots):
-            args = (T,) + overload.args
-            if args in reg:
-                if reg[args] != overload.r:
+            args = (T,) + overload.args if token is not obj else overload.args
+            if str(args) in reg:
+                if reg[str(args)] != overload.r.name:
                     print(
                         "Warning: Inconsistent return type at %s(%s)"
                         % (callee, [x.name for x in args]), file=sys.stderr
                     )
                 continue
-            reg[args] = overload.r
+            reg[str(args)] = overload.r.name
             overloads.append(type_repr.FunctionType(
                 args,
                 overload.r
             ))
-    overloads.extend(explore(callee, depth - 1, add_to_roots))
     return overloads
 
 
@@ -152,11 +158,13 @@ for i in range(2):
         if issubclass(t, BaseException):
             continue
         ctor = intrinsic_function.ArrowCollectionIntrinsic(
+            "<ctor>",
             explore(t, add_to_roots=t is not complex)
         )
         if t in type_ctors:
             funcs[type_ctors[t]] = ctor
-for obj in tqdm.tqdm(list(roots)):
+# print(roots)
+for _, obj in tqdm.tqdm(list(roots)):
     for attr in dir(obj):
         if attr in skip_attrs:
             continue
@@ -164,7 +172,14 @@ for obj in tqdm.tqdm(list(roots)):
         if type(attr_obj) in types:
             types[type(obj)].members[attr] = types[type(attr_obj)]
         elif callable(attr_obj):
+            if attr.startswith("__i") and hasattr(obj, attr.replace("__i", "__")):
+                continue
+            if attr.startswith("__r") and hasattr(obj, attr.replace("__r", "__")):
+                continue
+            if hasattr(operator, attr):
+                attr_obj = functools.partial(getattr(operator, attr), obj)
             collect_type = intrinsic_function.ArrowCollectionIntrinsic(
+                types[type(obj)].name + "." + attr,
                 explore(attr_obj, add_to_roots=False)
             )
             if len(collect_type) == 0:
@@ -185,7 +200,7 @@ for t in types.values():
 ARROW = "        FunctionType([%s], %s)"
 FUNC = """%s.add_function_member(
     "%s",
-    ArrowCollectionIntrinsic([
+    ArrowCollectionIntrinsic("%s", [
 %s
     ])
 )"""
@@ -201,7 +216,7 @@ for t in types.values():
             for sub in t.members[k]:
                 parms = ', '.join([sname(a) for a in sub.args])
                 sub_arrs.append(ARROW % (parms, sname(sub.r)))
-            code.append(FUNC % (sname(t), k, ', \n'.join(sub_arrs)))
+            code.append(FUNC % (sname(t), k, k, ', \n'.join(sub_arrs)))
         else:
             code.append(
                 '%s.members["%s"] = %s'

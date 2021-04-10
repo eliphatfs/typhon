@@ -34,6 +34,15 @@ except Exception as exc_caught:
 code_assign_expr = """
 a = (b := 3)
 """
+code_numerics = """
+a = 1
+b = a + 2.0
+c = b + 2j
+d = 4 - 5j
+e = c * d + b
+f = 1.3 ** 4
+g = 2.718 ** 5.02
+"""
 
 
 class BasicExpressionTest(unittest.TestCase):
@@ -92,3 +101,20 @@ class BasicExpressionTest(unittest.TestCase):
             res.env.query_name("b").TV.T,
             res.ts.query_val_type(0)
         )
+
+    def test_numerics(self):
+        res = typhon.core.type_infer(code_numerics)
+        self.assertEqual(
+            res.env.query_name("a").TV.T,
+            res.ts.query_val_type(0)
+        )
+        for floating in "bfg":
+            self.assertEqual(
+                res.env.query_name(floating).TV.T,
+                res.ts.query_val_type(0.0)
+            )
+        for cplx in "cde":
+            self.assertEqual(
+                res.env.query_name(cplx).TV.T,
+                res.ts.query_val_type(0.0 + 0.0j)
+            )
