@@ -4,9 +4,6 @@ Created on Sat Mar 13 21:20:11 2021
 
 @author: eliphat
 """
-from .intrinsics.py_numerics import py_int
-from .intrinsics.py_bool import py_bool
-from .intrinsics.py_none import py_none
 from . import TypeVar, BaseConstraint
 
 
@@ -17,12 +14,19 @@ class TypeSystem:
         self.program_name = program_name
 
     def query_val_type(self, py_val):
+        from .intrinsics.builtin_functions import builtin_types_generated
         if type(py_val) is int:
-            return py_int
+            return builtin_types_generated.builtins_int
         elif py_val is None:
-            return py_none
+            return builtin_types_generated.NoneType
         elif type(py_val) is bool:
-            return py_bool
+            return builtin_types_generated.builtins_bool
+        elif py_val is ...:
+            return builtin_types_generated.ellipsis
+        if type(py_val) is float:
+            return builtin_types_generated.builtins_float
+        if type(py_val) is complex:
+            return builtin_types_generated.builtins_complex
         raise TypeError("Unrecognized type: %s from value %s" % (type(py_val), py_val))
 
     def add_var(self, v: TypeVar):

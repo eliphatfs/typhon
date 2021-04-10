@@ -6,8 +6,7 @@ Created on Sat Mar 27 11:02:51 2021
 """
 from ..type_repr import RecordType, BottomType
 from .intrinsic_function import WrapperIntrinsic
-from .py_numerics import py_int
-from .py_none import py_none
+from .builtin_functions.builtin_types_generated import builtins_int, NoneType
 from .py_iter import PyIter
 
 
@@ -39,18 +38,18 @@ class PyList(RecordType):
 
     def append(self, obj_T):
         self.U = self.U | obj_T
-        return py_none
+        return NoneType
 
     def get_item(self, index_T):
-        if index_T != py_int:
+        if index_T != builtins_int:
             raise TypeError("List index should be of integral type.")
         return self.U
 
     def set_item(self, index_T, obj_T):
-        if index_T != py_int:
+        if index_T != builtins_int:
             raise TypeError("List index should be of integral type.")
         self.U = self.U | obj_T
-        return py_none
+        return NoneType
 
     def iterator(self):
         return self._it
