@@ -100,12 +100,17 @@ roots = {
 }
 
 
-def explore(callee, depth=3, add_to_roots=False):
+def explore(callee, depth=3, add_to_roots=False, v=False):
     if depth == 0:
         try:
+            if v:
+                print(callee)
             result = callee()
-            # print(result)
-        except Exception:
+            if v:
+                print(result)
+        except Exception as exc:
+            if v:
+                print(exc)
             return []
         if add_to_roots:
             roots.add((type(result), result))
@@ -120,7 +125,7 @@ def explore(callee, depth=3, add_to_roots=False):
         for d in (depth, depth + 1):
             if ('(%d given)' % d) in feature or ('got %d' % d) in feature:
                 # print("No such depth", callee, depth)
-                return explore(callee, depth - 1, add_to_roots)
+                return explore(callee, depth - 1, add_to_roots, v=v)
     except Exception:
         pass
     overloads = []
@@ -135,7 +140,7 @@ def explore(callee, depth=3, add_to_roots=False):
             partial = functools.partial(callee, obj)
         else:
             partial = callee
-        for overload in explore(partial, depth - 1, add_to_roots):
+        for overload in explore(partial, depth - 1, add_to_roots, v=v):
             args = (T,) + overload.args if token is not obj else overload.args
             if str(args) in reg:
                 if reg[str(args)] != overload.r.name:
@@ -176,7 +181,7 @@ for _, obj in tqdm.tqdm(list(roots)):
                 continue
             if attr.startswith("__r") and hasattr(obj, attr.replace("__r", "__")):
                 continue
-            if hasattr(operator, attr):
+            if attr.startswith("__") and hasattr(operator, attr):
                 attr_obj = functools.partial(getattr(operator, attr), obj)
             collect_type = intrinsic_function.ArrowCollectionIntrinsic(
                 types[type(obj)].name + "." + attr,

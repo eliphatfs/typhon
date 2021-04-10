@@ -89,11 +89,11 @@ NoneType.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -104,11 +104,11 @@ NoneType.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -120,11 +120,11 @@ ellipsis.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -135,11 +135,11 @@ ellipsis.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -186,11 +186,11 @@ builtins_bool.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -285,10 +285,10 @@ builtins_bool.add_function_member(
     ArrowCollectionIntrinsic("__mul__", [
         FunctionType([builtins_str], builtins_str), 
         FunctionType([builtins_int], builtins_int), 
-        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([builtins_float], builtins_float), 
         FunctionType([builtins_bool], builtins_int), 
-        FunctionType([builtins_complex], builtins_complex)
+        FunctionType([builtins_complex], builtins_complex), 
+        FunctionType([builtins_bytes], builtins_bytes)
     ])
 )
 builtins_bool.add_function_member(
@@ -297,11 +297,11 @@ builtins_bool.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -406,8 +406,8 @@ builtins_bytes.add_function_member(
     "__contains__",
     ArrowCollectionIntrinsic("__contains__", [
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
-        FunctionType([builtins_bool], builtins_bool)
+        FunctionType([builtins_bool], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool)
     ])
 )
 builtins_bytes.members["__doc__"] = builtins_str
@@ -417,11 +417,11 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -430,13 +430,6 @@ builtins_bytes.add_function_member(
     "__ge__",
     ArrowCollectionIntrinsic("__ge__", [
         FunctionType([builtins_bytes], builtins_bool)
-    ])
-)
-builtins_bytes.add_function_member(
-    "__getitem__",
-    ArrowCollectionIntrinsic("__getitem__", [
-        FunctionType([builtins_int], builtins_int), 
-        FunctionType([builtins_bool], builtins_int)
     ])
 )
 builtins_bytes.add_function_member(
@@ -482,11 +475,11 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -522,19 +515,6 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_int, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_int, builtins_bool], builtins_int), 
         FunctionType([builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes], builtins_int), 
         FunctionType([builtins_bool, builtins_int, builtins_int], builtins_int), 
         FunctionType([builtins_bool, builtins_int, NoneType], builtins_int), 
         FunctionType([builtins_bool, builtins_int, builtins_bool], builtins_int), 
@@ -547,14 +527,25 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_bool, builtins_bool, NoneType], builtins_int), 
         FunctionType([builtins_bool, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_bool, builtins_bool], builtins_int), 
-        FunctionType([builtins_bool], builtins_int)
+        FunctionType([builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes], builtins_int)
     ])
 )
 builtins_bytes.add_function_member(
     "decode",
     ArrowCollectionIntrinsic("decode", [
-        FunctionType([builtins_str, builtins_str], builtins_str), 
-        FunctionType([builtins_str], builtins_str), 
         FunctionType([], builtins_str)
     ])
 )
@@ -600,19 +591,6 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_int, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_int, builtins_bool], builtins_int), 
         FunctionType([builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes], builtins_int), 
         FunctionType([builtins_bool, builtins_int, builtins_int], builtins_int), 
         FunctionType([builtins_bool, builtins_int, NoneType], builtins_int), 
         FunctionType([builtins_bool, builtins_int, builtins_bool], builtins_int), 
@@ -625,7 +603,20 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_bool, builtins_bool, NoneType], builtins_int), 
         FunctionType([builtins_bool, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_bool, builtins_bool], builtins_int), 
-        FunctionType([builtins_bool], builtins_int)
+        FunctionType([builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes], builtins_int)
     ])
 )
 builtins_bytes.add_function_member(
@@ -644,6 +635,50 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_str, builtins_bool], builtins_str), 
         FunctionType([builtins_str], builtins_str), 
         FunctionType([], builtins_str)
+    ])
+)
+builtins_bytes.add_function_member(
+    "index",
+    ArrowCollectionIntrinsic("index", [
+        FunctionType([builtins_int, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_int, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_int, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_int, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_int, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_int, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_int, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_int, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_int, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes], builtins_int), 
+        FunctionType([builtins_bool, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_bool, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool], builtins_int)
     ])
 )
 builtins_bytes.add_function_member(
@@ -720,8 +755,8 @@ builtins_bytes.add_function_member(
 builtins_bytes.add_function_member(
     "lstrip",
     ArrowCollectionIntrinsic("lstrip", [
-        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([NoneType], builtins_bytes), 
+        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([], builtins_bytes)
     ])
 )
@@ -755,6 +790,50 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_int, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_int, builtins_bool], builtins_int), 
         FunctionType([builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_bool, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
+        FunctionType([builtins_bytes], builtins_int)
+    ])
+)
+builtins_bytes.add_function_member(
+    "rindex",
+    ArrowCollectionIntrinsic("rindex", [
+        FunctionType([builtins_int, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_int, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_int, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_int, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_int, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_int, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_int, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_int, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_int, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_int], builtins_int), 
         FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
         FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
         FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
@@ -768,37 +847,19 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_bytes, builtins_bool], builtins_int), 
         FunctionType([builtins_bytes], builtins_int), 
-        FunctionType([builtins_bool, builtins_int, builtins_int], builtins_int), 
-        FunctionType([builtins_bool, builtins_int, NoneType], builtins_int), 
-        FunctionType([builtins_bool, builtins_int, builtins_bool], builtins_int), 
-        FunctionType([builtins_bool, builtins_int], builtins_int), 
         FunctionType([builtins_bool, NoneType, builtins_int], builtins_int), 
         FunctionType([builtins_bool, NoneType, NoneType], builtins_int), 
         FunctionType([builtins_bool, NoneType, builtins_bool], builtins_int), 
         FunctionType([builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_bool, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_bool, builtins_int], builtins_int), 
         FunctionType([builtins_bool, builtins_bool, builtins_int], builtins_int), 
         FunctionType([builtins_bool, builtins_bool, NoneType], builtins_int), 
         FunctionType([builtins_bool, builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_bool, builtins_bool], builtins_int), 
         FunctionType([builtins_bool], builtins_int)
-    ])
-)
-builtins_bytes.add_function_member(
-    "rindex",
-    ArrowCollectionIntrinsic("rindex", [
-        FunctionType([builtins_bytes, NoneType, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, NoneType, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, builtins_int], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, NoneType], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes, builtins_bool], builtins_int), 
-        FunctionType([builtins_bytes], builtins_int)
     ])
 )
 builtins_bytes.add_function_member(
@@ -813,8 +874,8 @@ builtins_bytes.add_function_member(
 builtins_bytes.add_function_member(
     "rstrip",
     ArrowCollectionIntrinsic("rstrip", [
-        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([NoneType], builtins_bytes), 
+        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([], builtins_bytes)
     ])
 )
@@ -839,8 +900,8 @@ builtins_bytes.add_function_member(
 builtins_bytes.add_function_member(
     "strip",
     ArrowCollectionIntrinsic("strip", [
-        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([NoneType], builtins_bytes), 
+        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([], builtins_bytes)
     ])
 )
@@ -876,6 +937,13 @@ builtins_bytes.add_function_member(
         FunctionType([builtins_bool], builtins_bytes)
     ])
 )
+builtins_bytes.add_function_member(
+    "__getitem__",
+    ArrowCollectionIntrinsic("__getitem__", [
+        FunctionType([builtins_int], builtins_int), 
+        FunctionType([builtins_bool], builtins_int)
+    ])
+)
 builtins_complex.add_nomial_parent(builtins_object)
 builtins_complex.add_function_member(
     "__abs__",
@@ -905,11 +973,11 @@ builtins_complex.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -929,11 +997,11 @@ builtins_complex.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1014,11 +1082,11 @@ builtins_float.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1098,11 +1166,11 @@ builtins_float.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1228,11 +1296,11 @@ builtins_int.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1327,10 +1395,10 @@ builtins_int.add_function_member(
     ArrowCollectionIntrinsic("__mul__", [
         FunctionType([builtins_str], builtins_str), 
         FunctionType([builtins_int], builtins_int), 
-        FunctionType([builtins_bytes], builtins_bytes), 
         FunctionType([builtins_float], builtins_float), 
         FunctionType([builtins_bool], builtins_int), 
-        FunctionType([builtins_complex], builtins_complex)
+        FunctionType([builtins_complex], builtins_complex), 
+        FunctionType([builtins_bytes], builtins_bytes)
     ])
 )
 builtins_int.add_function_member(
@@ -1339,11 +1407,11 @@ builtins_int.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1444,11 +1512,11 @@ builtins_object.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1459,11 +1527,11 @@ builtins_object.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1481,11 +1549,11 @@ builtins_range.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1497,11 +1565,11 @@ builtins_range.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1518,11 +1586,11 @@ builtins_range.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1533,11 +1601,11 @@ builtins_range.add_function_member(
         FunctionType([builtins_str], builtins_int), 
         FunctionType([builtins_range], builtins_int), 
         FunctionType([builtins_int], builtins_int), 
-        FunctionType([builtins_bytes], builtins_int), 
         FunctionType([NoneType], builtins_int), 
         FunctionType([builtins_float], builtins_int), 
         FunctionType([builtins_bool], builtins_int), 
         FunctionType([builtins_complex], builtins_int), 
+        FunctionType([builtins_bytes], builtins_int), 
         FunctionType([builtins_object], builtins_int), 
         FunctionType([ellipsis], builtins_int)
     ])
@@ -1549,6 +1617,14 @@ builtins_range.add_function_member(
     "__getitem__",
     ArrowCollectionIntrinsic("__getitem__", [
         FunctionType([builtins_int], builtins_int), 
+        FunctionType([builtins_bool], builtins_int)
+    ])
+)
+builtins_range.add_function_member(
+    "index",
+    ArrowCollectionIntrinsic("index", [
+        FunctionType([builtins_int], builtins_int), 
+        FunctionType([builtins_float], builtins_int), 
         FunctionType([builtins_bool], builtins_int)
     ])
 )
@@ -1572,11 +1648,11 @@ builtins_str.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1638,11 +1714,11 @@ builtins_str.add_function_member(
         FunctionType([builtins_str], builtins_bool), 
         FunctionType([builtins_range], builtins_bool), 
         FunctionType([builtins_int], builtins_bool), 
-        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([NoneType], builtins_bool), 
         FunctionType([builtins_float], builtins_bool), 
         FunctionType([builtins_bool], builtins_bool), 
         FunctionType([builtins_complex], builtins_bool), 
+        FunctionType([builtins_bytes], builtins_bool), 
         FunctionType([builtins_object], builtins_bool), 
         FunctionType([ellipsis], builtins_bool)
     ])
@@ -1742,13 +1818,31 @@ builtins_str.add_function_member(
         FunctionType([builtins_str], builtins_str), 
         FunctionType([builtins_range], builtins_str), 
         FunctionType([builtins_int], builtins_str), 
-        FunctionType([builtins_bytes], builtins_str), 
         FunctionType([NoneType], builtins_str), 
         FunctionType([builtins_float], builtins_str), 
         FunctionType([builtins_bool], builtins_str), 
         FunctionType([builtins_complex], builtins_str), 
+        FunctionType([builtins_bytes], builtins_str), 
         FunctionType([builtins_object], builtins_str), 
         FunctionType([ellipsis], builtins_str)
+    ])
+)
+builtins_str.add_function_member(
+    "index",
+    ArrowCollectionIntrinsic("index", [
+        FunctionType([builtins_str, builtins_int, builtins_int], builtins_int), 
+        FunctionType([builtins_str, builtins_int, NoneType], builtins_int), 
+        FunctionType([builtins_str, builtins_int, builtins_bool], builtins_int), 
+        FunctionType([builtins_str, builtins_int], builtins_int), 
+        FunctionType([builtins_str, NoneType, builtins_int], builtins_int), 
+        FunctionType([builtins_str, NoneType, NoneType], builtins_int), 
+        FunctionType([builtins_str, NoneType, builtins_bool], builtins_int), 
+        FunctionType([builtins_str, NoneType], builtins_int), 
+        FunctionType([builtins_str, builtins_bool, builtins_int], builtins_int), 
+        FunctionType([builtins_str, builtins_bool, NoneType], builtins_int), 
+        FunctionType([builtins_str, builtins_bool, builtins_bool], builtins_int), 
+        FunctionType([builtins_str, builtins_bool], builtins_int), 
+        FunctionType([builtins_str], builtins_int)
     ])
 )
 builtins_str.add_function_member(

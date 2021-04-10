@@ -14,6 +14,7 @@ b = a.replace("Aa", "AB")
 c = b.replace("Bb", "bb", 2)
 d = c.find("Bb")
 e = c.rindex("bb")
+f = c.index("bb")
 """
 
 
@@ -34,7 +35,7 @@ class LoopsTest(unittest.TestCase):
                 res.env.query_name(v).TV.T,
                 res.ts.query_val_type("")
             )
-        for v in "de":
+        for v in "def":
             self.assertEqual(
                 res.env.query_name(v).TV.T,
                 res.ts.query_val_type(0)
