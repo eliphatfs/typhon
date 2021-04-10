@@ -25,6 +25,10 @@ class WrapperIntrinsic(IntrinsicFunction):
 
 
 class ArrowCollectionIntrinsic(list, IntrinsicFunction):
+    def __init__(self, name, items):
+        self.name = name
+        list.__init__(self, items)
+
     def __call__(self, out_type_var, arg_type_vars):
         for arrow in self:
             if len(arrow.args) != len(arg_type_vars):
@@ -36,8 +40,7 @@ class ArrowCollectionIntrinsic(list, IntrinsicFunction):
                 out_type_var.T = arrow.r
                 return
         if not any(isinstance(argv.T, BottomType) for argv in arg_type_vars):
-            raise TypeError("Intrinsic type error.")
-            # TODO: meaningful error message
+            raise TypeError("Intrinsic type error.", self.name, [v.T.name for v in arg_type_vars])
 
     def __or__(self, o):
         if isinstance(o, ArrowCollectionIntrinsic):
