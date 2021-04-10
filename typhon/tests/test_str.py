@@ -18,7 +18,7 @@ f = c.index("bb")
 """
 
 
-class LoopsTest(unittest.TestCase):
+class StrTest(unittest.TestCase):
 
     def test_lu(self):
         res = typhon.core.type_infer(code_lu)
