@@ -29,6 +29,8 @@ class TypeSystem:
             return builtin_types_generated.builtins_complex
         if type(py_val) is str:
             return builtin_types_generated.builtins_str
+        if type(py_val) is bytes:
+            return builtin_types_generated.builtins_bytes
         raise TypeError("Unrecognized type: %s from value %s" % (type(py_val), py_val))
 
     def add_var(self, v: TypeVar):

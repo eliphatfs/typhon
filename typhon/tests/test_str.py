@@ -16,6 +16,11 @@ d = c.find("Bb")
 e = c.rindex("bb")
 f = c.index("bb")
 """
+code_bytes_basic = """
+a = b"abbc"
+b = a.replace(b"bb", b"aa")
+c = b.index(b"aaa")
+"""
 
 
 class StrTest(unittest.TestCase):
@@ -36,6 +41,19 @@ class StrTest(unittest.TestCase):
                 res.ts.query_val_type("")
             )
         for v in "def":
+            self.assertEqual(
+                res.env.query_name(v).TV.T,
+                res.ts.query_val_type(0)
+            )
+
+    def test_bytes_basic(self):
+        res = typhon.core.type_infer(code_bytes_basic)
+        for v in "ab":
+            self.assertEqual(
+                res.env.query_name(v).TV.T,
+                res.ts.query_val_type(b"")
+            )
+        for v in "c":
             self.assertEqual(
                 res.env.query_name(v).TV.T,
                 res.ts.query_val_type(0)
