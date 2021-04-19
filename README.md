@@ -26,6 +26,7 @@ Short-term goals:
 
 Laborious work (possibly generating from dynamically-run test cases?):
 - Import type information for the standard library
+- Built-in types and standard library at HIR backend (How to?)
 
 Mid-term goals:
 - Support tuples and inhomogeneously typed always-finite lists
